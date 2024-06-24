@@ -1,0 +1,21 @@
+.login-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    color: var(--color-black);
+
+    .login-page {
+        margin: auto;
+        width: 50%;
+        margin-top: 100px;   
+    }
+
+    .login-logo {
+        margin: auto;
+        width: 50%;
+        height: 100%;
+        text-align: center;
+
+        
+    }
+}
