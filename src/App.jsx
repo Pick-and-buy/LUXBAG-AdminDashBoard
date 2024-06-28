@@ -15,6 +15,12 @@ import NotFound from './components/NotFound/index.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserByToken, callFetchAccount } from './services/user.js';
 import { doGetAccountAction } from './redux/account/accountSlice.js';
+import BrandTable from './components/Admin/Brand/BrandTable.jsx';
+import BrandLinesTable from './components/Admin/BrandLines/BrandLinesTable';
+import CategoryTable from './components/Admin/Category/CategoryTable.jsx';
+import LayoutAdmin from './components/Admin/LayoutAdmin.jsx';
+import AdminDashboard from './pages/admin/index.jsx';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 const Layout = () => {
   return (
@@ -29,6 +35,7 @@ const Layout = () => {
 export default function App() {
 
   const isLoading = useSelector(state => state.account.isLoading);
+  const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
   const dispatch = useDispatch();
 
@@ -69,21 +76,29 @@ export default function App() {
     //================Admin====================
     {
       path: "/admin",
-      element: <Layout />,
+      element: <LayoutAdmin />,
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Home /> },
         {
-          path: "contact",
-          element: <ContactPage />,
+          index: true, element:
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
         },
         {
-          path: "book",
-          element: <BookPage />,
+          path: "brands",
+          element: <BrandTable />,
+        },
+        {
+          path: "brandLines",
+          element: <BrandLinesTable />,
+        },
+        {
+          path: "category",
+          element: <CategoryTable />,
         },
       ],
     },
-
 
     //================Login====================
     {
@@ -95,11 +110,12 @@ export default function App() {
 
   return (
     <>
-      {isLoading === false || window.location.pathname === '/login'
-      ?
-      <RouterProvider router={router} />
-      :
-      <Loading />
+      {isLoading === false
+        || window.location.pathname === '/login'
+        ?
+        <RouterProvider router={router} />
+        :
+        <Loading />
       }
     </>
   )
