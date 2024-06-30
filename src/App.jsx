@@ -19,6 +19,7 @@ import BrandTable from './components/Admin/Brand/BrandTable.jsx';
 import BrandLinesTable from './components/Admin/BrandLines/BrandLinesTable';
 import CategoryTable from './components/Admin/Category/CategoryTable.jsx';
 import LayoutAdmin from './components/Admin/LayoutAdmin.jsx';
+import './styles/reset.scss';
 import AdminDashboard from './pages/admin/index.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
