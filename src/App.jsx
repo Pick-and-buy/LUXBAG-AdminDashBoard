@@ -10,9 +10,17 @@ import BookPage from './pages/book/index.jsx';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home/index.jsx';
+import Loading from './components/Loading/index.jsx';
+import NotFound from './components/NotFound/index.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserByToken } from './services/user.js';
+import { getUserByToken, callFetchAccount } from './services/user.js';
 import { doGetAccountAction } from './redux/account/accountSlice.js';
+import BrandTable from './components/Admin/Brand/BrandTable.jsx';
+import BrandLinesTable from './components/Admin/BrandLines/BrandLinesTable';
+import CategoryTable from './components/Admin/Category/CategoryTable.jsx';
+import LayoutAdmin from './components/Admin/LayoutAdmin.jsx';
+import AdminDashboard from './pages/admin/index.jsx';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 const Layout = () => {
   return (
@@ -26,19 +34,25 @@ const Layout = () => {
 
 export default function App() {
 
-  // const dispatch = useDispatch();
+  const isLoading = useSelector(state => state.account.isLoading);
+  const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
-  // const getAccount = async () => {
-  //   const res = await getUserByToken();
-  //   console.log(">>> check res getUserByToken <App.js>: ", res);
-  //   if (res && res.result) {
-  //     dispatch(doGetAccountAction(res.result))
-  //   }
-  // }
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   getAccount();
-  // }, [])
+  const getAccount = async () => {
+
+    if (window.location.pathname === '/login') return;
+
+    const res = await callFetchAccount();
+    console.log(">>> check res callFetchAccount <App.js>: ", res);
+    if (res && res.result) {
+      dispatch(doGetAccountAction(res.result))
+    }
+  }
+
+  useEffect(() => {
+    getAccount();
+  }, [])
 
   const router = createBrowserRouter([
 
@@ -46,7 +60,7 @@ export default function App() {
     {
       path: "/",
       element: <Layout />,
-      errorElement: <div>404 Not Found</div>,
+      errorElement: <NotFound />,
       children: [
         { index: true, element: <Home /> },
         {
@@ -60,8 +74,31 @@ export default function App() {
       ],
     },
     //================Admin====================
-
-
+    {
+      path: "/admin",
+      element: <LayoutAdmin />,
+      errorElement: <NotFound />,
+      children: [
+        {
+          index: true, element:
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+        },
+        {
+          path: "brands",
+          element: <BrandTable />,
+        },
+        {
+          path: "brandLines",
+          element: <BrandLinesTable />,
+        },
+        {
+          path: "category",
+          element: <CategoryTable />,
+        },
+      ],
+    },
 
     //================Login====================
     {
@@ -73,7 +110,13 @@ export default function App() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      {isLoading === false
+        || window.location.pathname === '/login'
+        ?
+        <RouterProvider router={router} />
+        :
+        <Loading />
+      }
     </>
   )
 }

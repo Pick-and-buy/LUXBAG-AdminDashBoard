@@ -48,7 +48,7 @@ const Login = () => {
             fetchUserData();
 
             message.success('Đăng nhập tài khoản thành công!');
-            // navigate('/')
+            navigate('/')
         } catch (error) {
             setIsSubmit(false);
             notification.error({
