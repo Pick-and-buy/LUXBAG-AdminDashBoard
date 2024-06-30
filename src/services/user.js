@@ -5,7 +5,7 @@ export const getUserByToken = async () => {
     const response = await axiosInstance.get('/users/profile');
     return response.data;
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    console.error('Error fetching admin data:', error);
     throw error;
   }
 };
@@ -15,7 +15,7 @@ export const callFetchAccount = async () => {
     const response = await axiosInstance.get('/users/profile');
     return response.data;
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    console.error('Error fetching admin data:', error);
     throw error;
   }
 };

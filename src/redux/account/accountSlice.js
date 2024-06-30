@@ -41,6 +41,30 @@ export const accountSlice = createSlice({
             state.user = action.payload;
             state.isLoading = false;
         },
+
+        doLogoutAction: (state, action) => {
+            localStorage.removeItem('accessToken');
+            state.isAuthenticated = false;
+            state.user = {
+                id: "",
+                username: "",
+                avatar: "",
+                lastName: "",
+                firstName: "",
+                email: "",
+                phoneNumber: "",
+                dob: "",
+                likedPosts: [],
+                roles: [
+                    {
+                        name: "",
+                        description: "",
+                        permissions: [],
+                    }
+                ],
+                createdPosts: [],
+            };
+        },
         
     },
     
@@ -49,6 +73,6 @@ export const accountSlice = createSlice({
     },
 });
 
-export const { doLoginAction, doGetAccountAction } = accountSlice.actions;
+export const { doLoginAction, doGetAccountAction, doLogoutAction } = accountSlice.actions;
 
 export default accountSlice.reducer;
