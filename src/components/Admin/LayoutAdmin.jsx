@@ -10,6 +10,7 @@ import {
     MenuUnfoldOutlined,
     DownOutlined,
     BlockOutlined,
+    PaperClipOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, Avatar, Dropdown, Space, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,7 +30,12 @@ const items = [
         icon: <AppstoreOutlined />,
     },
     {
-        label: <span>Manage Brand</span>,
+        label: <Link to='/admin/user'>Manage Users</Link>,
+        key: 'user',
+        icon: <UserOutlined />,
+    },
+    {
+        label: <span>Manage Brands</span>,
         icon: <BlockOutlined />,
         children: [
             {
@@ -46,9 +52,14 @@ const items = [
         ]
     },
     {
-        label: <Link to='/admin/category'>Manage Category</Link>,
+        label: <Link to='/admin/category'>Manage Categories</Link>,
         key: 'category',
         icon: <ExceptionOutlined />,
+    },
+    {
+        label: <Link to='/admin/news'>Manage News</Link>,
+        key: 'news',
+        icon: <PaperClipOutlined />,
     },
 ];
 
