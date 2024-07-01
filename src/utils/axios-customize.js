@@ -7,32 +7,52 @@ const axiosInstance = axios.create({
     withCredentials: true,
 });
 
-//interceptor: là cách mà can thiệp vào request trước khi gửi lên server back-end
+const handleRefreshToken = async () => {
+    const token = localStorage.getItem('accessToken');
+    const res = await axiosInstance.post('/auth/refresh-token', { accessToken: token });
+    console.log('>>> check handleRefreshToken: ', res);
+    if (res && res?.result) return res?.result?.accessToken;
+    else null;
+}
 
+//interceptor: là cách mà can thiệp vào request trước khi gửi lên server back-end
 axiosInstance.interceptors.request.use(
     function (config) {
-    const token = localStorage.getItem('accessToken');
-    if(token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-    
-}, 
-function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-});
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    function (error) {
+        // Do something with request error
+        return Promise.reject(error);
+    });
 
+const NO_RETRY_HEADER = 'x-no-retry';
 
 //interceptor: là cách mà can thiệp vào response trước khi server gửi về cho client
 axiosInstance.interceptors.response.use(function (response) {
     console.log('>>> check response axios customize: ', response);
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
     return response;
-}, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+}, async function (error) {
+
+    if (error.config && error.response && +error.response.status === 401 && !error.config.headers[NO_RETRY_HEADER]) {
+        //get new accessToken
+        const accessToken = await handleRefreshToken();
+
+        error.config.headers[NO_RETRY_HEADER] = 'true';
+
+        if (accessToken) {
+            //Gán vào request hiện tại => set lại token mới
+            error.config.headers.Authorization = `Bearer ${accessToken}`;
+            //Ghi đè token mới lên
+            localStorage.setItem('accessToken', accessToken)
+            return axiosInstance.request(error.config);
+        }
+    }
+
+
     return Promise.reject(error);
 });
 
