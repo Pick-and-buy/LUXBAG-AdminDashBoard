@@ -15,8 +15,8 @@ export const callLogin = async (phoneNumber, password) => {
 
 export const callLogout = async () => {
     try {
-        const accessToken = localStorage.getItem('accessToken');
-        const response = await axiosInstance.post('/auth/logout', { accessToken });
+        const token = localStorage.getItem('accessToken');
+        const response = await axiosInstance.post('/auth/logout', { accessToken: token });
         return response;
     } catch (error) {
         console.error('Error logout:', error);
