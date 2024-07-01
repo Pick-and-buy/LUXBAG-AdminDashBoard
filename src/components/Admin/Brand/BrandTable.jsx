@@ -10,6 +10,8 @@ import {
     ReloadOutlined
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
+import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBrand, callUpdateBrand } from "../../../services/brand";
+import InputSearch from './InputSearch';
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -21,16 +23,33 @@ const BrandTable = () => {
     const [filter, setFilter] = useState("");
     const [sortQuery, setSortQuery] = useState("");
 
+
+    useEffect(() => {
+        fetchBrand();
+    }, []);
+
+    const fetchBrand = async () => {
+        setIsLoading(true);
+        const res = await callFetchListBrands();
+        console.log('>>> check call get all Brand <Brand Table>: ', res);
+        if(res && res.result) {
+            setListBrand(res.result);
+        }
+
+        setIsLoading(false);
+    }
+
+
     const columns = [
         {
             title: 'Id',
-            dataIndex: 'id',  //đặt tên "_id" đúng theo database
+            dataIndex: 'id',  
             //Hàm Render() Columns cung cấp 1 param: record
             //record => chính là data tại cái row mà nó render ra
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => console.log('detail')}>
-                        {record._id}
+                        {record.id}
                     </a>
                 )
             }
@@ -90,14 +109,33 @@ const BrandTable = () => {
                     // onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
+                    <Button
+                        type='ghost'
+                        onClick={() => {
+                            setFilter("")
+                            setSortQuery("")
+                        }}
+                    >
+                        <ReloadOutlined />
+                    </Button>
                 </span>
             </div>
         )
     }
 
+    const handleSearch = (query) => {
+        setFilter(query)
+    }
+
     return (
         <>
             <Row>
+                <Col span={24}>
+                    <InputSearch
+                        handleSearchProps={handleSearch}
+                        setFilter={setFilter}
+                    />
+                </Col>
                 <Col span={24}>
                     <Table
                         title={renderHeader}
