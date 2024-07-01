@@ -22,6 +22,8 @@ import LayoutAdmin from './components/Admin/LayoutAdmin.jsx';
 import './styles/reset.scss';
 import AdminDashboard from './pages/admin/index.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import UserTable from './components/Admin/User/UserTable';
+import NewsTable from './components/Admin/News/NewsTable';
 
 const Layout = () => {
   return (
@@ -87,6 +89,10 @@ export default function App() {
             </ProtectedRoute>
         },
         {
+          path: "user",
+          element: <UserTable />,
+        },
+        {
           path: "brands",
           element: <BrandTable />,
         },
@@ -97,6 +103,10 @@ export default function App() {
         {
           path: "category",
           element: <CategoryTable />,
+        },
+        {
+          path: "news",
+          element: <NewsTable />,
         },
       ],
     },
