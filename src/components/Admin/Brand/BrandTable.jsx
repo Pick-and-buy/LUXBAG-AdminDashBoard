@@ -11,7 +11,6 @@ import {
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
 import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBrand, callUpdateBrand } from "../../../services/brand";
-import InputSearch from './InputSearch';
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -20,32 +19,30 @@ const BrandTable = () => {
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("");
-
 
     useEffect(() => {
         fetchBrand();
-    }, []);
+    }, [current, pageSize]);
 
     const fetchBrand = async () => {
         setIsLoading(true);
         const res = await callFetchListBrands();
         console.log('>>> check call get all Brand <Brand Table>: ', res);
-        if(res && res.result) {
+        if (res && res.result) {
             setListBrand(res.result);
+            setTotal(listBrand.length);
         }
 
         setIsLoading(false);
     }
 
-
     const columns = [
         {
             title: 'Id',
-            dataIndex: 'id',  
-            //Hàm Render() Columns cung cấp 1 param: record
-            //record => chính là data tại cái row mà nó render ra
+            width: '25%',
+            align: 'center',
+            dataIndex: 'id',
+            sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => console.log('detail')}>
@@ -56,12 +53,21 @@ const BrandTable = () => {
         },
         {
             title: 'Tên Thương Hiệu',
+            width: '50%',
+            align: 'center',
             dataIndex: 'name',
-            sorter: true,
+            sorter: (a, b) => a.name.length - b.name.length,
+            filters: listBrand.map(brand => ({
+                text: brand.name,
+                value: brand.name,
+            })),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.name.includes(value),
         },
         {
             title: 'Action',
-            width: 100,
+            align: 'center',
             render: (text, record, index) => {
                 return (
                     <>
@@ -89,6 +95,16 @@ const BrandTable = () => {
     ];
 
     const onChange = (pagination, filters, sorter, extra) => {
+        if (pagination && pagination.current !== current) {
+            setCurrent(pagination.current)
+        }
+
+        if (pagination && pagination.pageSize !== pageSize) {
+            setPageSize(pagination.pageSize)
+            setCurrent(1)
+        }
+
+
         console.log('check params', pagination, filters, sorter, extra);
     }
 
@@ -109,38 +125,18 @@ const BrandTable = () => {
                     // onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
-                    <Button
-                        type='ghost'
-                        onClick={() => {
-                            setFilter("")
-                            setSortQuery("")
-                        }}
-                    >
-                        <ReloadOutlined />
-                    </Button>
                 </span>
             </div>
         )
-    }
-
-    const handleSearch = (query) => {
-        setFilter(query)
     }
 
     return (
         <>
             <Row>
                 <Col span={24}>
-                    <InputSearch
-                        handleSearchProps={handleSearch}
-                        setFilter={setFilter}
-                    />
-                </Col>
-                <Col span={24}>
                     <Table
                         title={renderHeader}
                         loading={isLoading}
-
                         columns={columns}
                         dataSource={listBrand}
                         onChange={onChange}

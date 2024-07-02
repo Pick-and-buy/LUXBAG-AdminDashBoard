@@ -30,7 +30,7 @@ export const callCreateBrand = async (formData) => {
 export const getAllBrandByName = async (name) => {
     try {
         const response = await axiosInstance.get(`/brands/${name}`);
-        return response.data;
+        return response.data.result;
     } catch (error) {
         console.error('Error Get All Brand By Name:', error);
         throw error;
