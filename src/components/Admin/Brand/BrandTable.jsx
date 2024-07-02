@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
 import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBrand, callUpdateBrand } from "../../../services/brand";
+import BrandViewDetail from "./BrandViewDetail";
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -19,6 +20,9 @@ const BrandTable = () => {
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
 
     useEffect(() => {
         fetchBrand();
@@ -45,7 +49,10 @@ const BrandTable = () => {
             sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (
-                    <a href="#" onClick={() => console.log('detail')}>
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
                         {record.id}
                     </a>
                 )
@@ -161,7 +168,11 @@ const BrandTable = () => {
                     />
                 </Col>
             </Row>
-
+            <BrandViewDetail 
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />            
         </>
     )
 }
