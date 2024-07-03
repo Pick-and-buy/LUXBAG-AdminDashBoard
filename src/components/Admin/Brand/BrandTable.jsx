@@ -12,6 +12,7 @@ import {
 import { COLORS } from "../../../constants/theme";
 import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBrand, callUpdateBrand } from "../../../services/brand";
 import BrandViewDetail from "./BrandViewDetail";
+import * as XLSX from 'xlsx';
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -115,6 +116,16 @@ const BrandTable = () => {
         console.log('check params', pagination, filters, sorter, extra);
     }
 
+    const handleExportData = () => {
+        //https://stackoverflow.com/questions/70871254/how-can-i-export-a-json-object-to-excel-using-nextjs-react
+        if (listBrand.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listBrand);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "ExportBrand.csv");
+        }
+    }
+
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -122,13 +133,13 @@ const BrandTable = () => {
                 <span style={{ display: 'flex', gap: 20 }}>
                     <Button
                         icon={<ExportOutlined />}
-                        type="default"
-                    // onClick={() => handleExportData()}
+                        type="primary"
+                    onClick={() => handleExportData()}
                     >Export
                     </Button>
                     <Button
                         icon={<PlusOutlined />}
-                        type="dashed" danger
+                        type="primary" danger
                     // onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
