@@ -59,7 +59,7 @@ export const getAllBrandByName = async (name) => {
 export const callDeleteBrand = async (query) => {
     try {
         const response = await axiosInstance.delete(`/brands/name?${query}`);
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error Delete Brand:', error);
         throw error;

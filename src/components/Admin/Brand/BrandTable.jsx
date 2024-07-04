@@ -37,7 +37,7 @@ const BrandTable = () => {
         console.log('>>> check call get all Brand <Brand Table>: ', res);
         if (res && res.result) {
             setListBrand(res.result);
-            setTotal(listBrand.length);
+            setTotal(res.result.length);
         }
         setIsLoading(false);
     }
@@ -84,7 +84,7 @@ const BrandTable = () => {
                             placement="leftTop"
                             title={"Xác nhận xóa thương hiệu"}
                             description={"Bạn có chắc chắn muốn xóa thương hiệu này ?"}
-                            // onConfirm={() => handleDeleteUser(record.id)}
+                            onConfirm={() => handleDeleteBrand(record.name)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -102,6 +102,14 @@ const BrandTable = () => {
             }
         },
     ];
+
+    const handleDeleteBrand = async (name) => {
+        let query = `brandName=${name}`;
+        const res = await callDeleteBrand(query);
+        console.log('>>> check res DELETE BRAND: ', res);
+        message.success('Xóa thương hiệu thành công');
+        fetchBrand();
+    }
 
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current !== current) {
@@ -182,11 +190,11 @@ const BrandTable = () => {
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
             />
-            <BrandModalCreate 
-            openModalCreate={openModalCreate}
-            setOpenModalCreate={setOpenModalCreate}
-            fetchBrand={fetchBrand}
-            
+            <BrandModalCreate
+                openModalCreate={openModalCreate}
+                setOpenModalCreate={setOpenModalCreate}
+                fetchBrand={fetchBrand}
+
             />
         </>
     )
