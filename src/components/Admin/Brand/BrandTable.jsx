@@ -10,6 +10,11 @@ import {
     ReloadOutlined
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
+import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBrand, callUpdateBrand } from "../../../services/brand";
+import BrandViewDetail from "./BrandViewDetail";
+import * as XLSX from 'xlsx';
+import BrandModalCreate from "./BrandModalCreate";
+import BrandModalUpdate from "./BrandModalUpdate";
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -18,31 +23,64 @@ const BrandTable = () => {
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("");
+
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
+    const [openModalCreate, setOpenModalCreate] = useState(false);
+
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const [openModalUpdate, setOpenModalUpdate] = useState(false);
+
+    useEffect(() => {
+        fetchBrand();
+    }, [current, pageSize]);
+
+    const fetchBrand = async () => {
+        setIsLoading(true);
+        const res = await callFetchListBrands();
+        console.log('>>> check call get all Brand <Brand Table>: ', res);
+        if (res && res.result) {
+            setListBrand(res.result);
+            setTotal(res.result.length);
+        }
+        setIsLoading(false);
+    }
 
     const columns = [
         {
             title: 'Id',
-            dataIndex: 'id',  //đặt tên "_id" đúng theo database
-            //Hàm Render() Columns cung cấp 1 param: record
-            //record => chính là data tại cái row mà nó render ra
+            width: '25%',
+            align: 'center',
+            dataIndex: 'id',
+            sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (
-                    <a href="#" onClick={() => console.log('detail')}>
-                        {record._id}
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
+                        {record.id}
                     </a>
                 )
             }
         },
         {
             title: 'Tên Thương Hiệu',
+            width: '50%',
+            align: 'center',
             dataIndex: 'name',
-            sorter: true,
+            sorter: (a, b) => a.name.length - b.name.length,
+            filters: listBrand.map(brand => ({
+                text: brand.name,
+                value: brand.name,
+            })),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.name.includes(value),
         },
         {
             title: 'Action',
-            width: 100,
+            align: 'center',
             render: (text, record, index) => {
                 return (
                     <>
@@ -50,7 +88,7 @@ const BrandTable = () => {
                             placement="leftTop"
                             title={"Xác nhận xóa thương hiệu"}
                             description={"Bạn có chắc chắn muốn xóa thương hiệu này ?"}
-                            // onConfirm={() => handleDeleteUser(record.id)}
+                            onConfirm={() => handleDeleteBrand(record.name)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -61,7 +99,10 @@ const BrandTable = () => {
                         <EditTwoTone
                             twoToneColor={COLORS.primary}
                             style={{ cursor: "pointer", paddingLeft: 20 }}
-                            onClick={() => console.log('update brand')}
+                            onClick={() => {
+                                setOpenModalUpdate(true);
+                                setDataUpdate(record);
+                            }}
                         />
                     </>
                 )
@@ -69,25 +110,50 @@ const BrandTable = () => {
         },
     ];
 
+    const handleDeleteBrand = async (name) => {
+        let query = `brandName=${name}`;
+        const res = await callDeleteBrand(query);
+        console.log('>>> check res DELETE BRAND: ', res);
+        message.success('Xóa thương hiệu thành công');
+        fetchBrand();
+    }
+
     const onChange = (pagination, filters, sorter, extra) => {
+        if (pagination && pagination.current !== current) {
+            setCurrent(pagination.current)
+        }
+        if (pagination && pagination.pageSize !== pageSize) {
+            setPageSize(pagination.pageSize)
+            setCurrent(1)
+        }
         console.log('check params', pagination, filters, sorter, extra);
+    }
+
+    const handleExportData = () => {
+        //https://stackoverflow.com/questions/70871254/how-can-i-export-a-json-object-to-excel-using-nextjs-react
+        if (listBrand.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listBrand);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "ExportBrand.csv");
+        }
     }
 
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brands</span>
-                <span style={{ display: 'flex', gap: 20 }}>
+                <span style={{ display: 'flex', gap: 10 }}>
                     <Button
                         icon={<ExportOutlined />}
-                        type="default"
-                    // onClick={() => handleExportData()}
+                        type="primary"
+                        onClick={() => handleExportData()}
                     >Export
                     </Button>
                     <Button
                         icon={<PlusOutlined />}
-                        type="dashed" danger
-                    // onClick={() => setOpenModalCreate(true)}
+                        type="primary" danger
+                        onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
                 </span>
@@ -102,7 +168,6 @@ const BrandTable = () => {
                     <Table
                         title={renderHeader}
                         loading={isLoading}
-
                         columns={columns}
                         dataSource={listBrand}
                         onChange={onChange}
@@ -127,7 +192,23 @@ const BrandTable = () => {
                     />
                 </Col>
             </Row>
-
+            <BrandViewDetail
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />
+            <BrandModalCreate
+                openModalCreate={openModalCreate}
+                setOpenModalCreate={setOpenModalCreate}
+                fetchBrand={fetchBrand}
+            />
+            <BrandModalUpdate
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+                fetchBrand={fetchBrand}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
+            />
         </>
     )
 }
