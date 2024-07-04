@@ -40,15 +40,14 @@ const BrandViewDetail = (props) => {
 
     const handlePreview = async (file) => {
         console.log('>>> check file: ', file);
-        setPreviewImage(file.url || (file.preview));
-        setPreviewOpen(true);
-        //set tên brand khi người dùng muốn xem chi tiết ảnh
-        setPreviewTitle(dataViewDetail.name)
+        if(file.url) {
+            setPreviewImage(file.url || (file.preview));
+            setPreviewOpen(true);
+            //set tên brand khi người dùng muốn xem chi tiết ảnh
+            setPreviewTitle(dataViewDetail.name)
+            return;
+        }
     };
-
-    const handleChange = ({ fileList: newFileList }) => {
-        setFileList(newFileList);
-    }
 
     return (
         <>
@@ -72,7 +71,6 @@ const BrandViewDetail = (props) => {
                     listType="picture-card"
                     fileList={fileList}
                     onPreview={handlePreview}
-                    onChange={handleChange}
                     showUploadList={
                         { showRemoveIcon: false }
                     }

@@ -21,7 +21,7 @@ const BrandModalCreate = (props) => {
     const onFinish = async (values) => {
         console.log(">>> check values <BrandModalCreate>: ", values);
         console.log(">>> check fileList <BrandModalCreate>: ", fileList);
-        
+
         const formData = new FormData();
 
         const request = {
@@ -32,14 +32,10 @@ const BrandModalCreate = (props) => {
             formData.append('brandLogo', file.originFileObj);
         });
 
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-        await callCreateBrand(formData);
-    }
-
-    const handleUploadFile = async ({ file, onSuccess, onError }) => {
-        console.log(file);
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(key, value);
+        // }
+        // await callCreateBrand(formData);
     }
 
     const getBase64 = (file) =>
@@ -65,12 +61,6 @@ const BrandModalCreate = (props) => {
     const handleChange = ({ fileList: newFileList }) => {
         console.log('>>> check handleChange FileList: ', newFileList);
         setFileList(newFileList);
-    }
-
-    const handleRemoveFile = (file, type) => {
-        if (type === 'brand') {
-            setDataBrand([]);
-        }
     }
 
     const handlePreview = async (file) => {
@@ -129,18 +119,16 @@ const BrandModalCreate = (props) => {
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Ảnh Thương Hiệu"
-                                name="logoUrl"
+                                name="brandLogos"
                             >
                                 <Upload
-                                    name="logoUrl"
+                                    name="brandLogos"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     multiple
                                     fileList={fileList}
-                                    //customRequest={handleUploadFile}
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}
-                                    onRemove={(file) => handleRemoveFile(file, "brand")}
                                     onPreview={handlePreview}
                                 >
                                     <div>

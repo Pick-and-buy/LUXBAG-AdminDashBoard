@@ -14,6 +14,7 @@ import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBran
 import BrandViewDetail from "./BrandViewDetail";
 import * as XLSX from 'xlsx';
 import BrandModalCreate from "./BrandModalCreate";
+import BrandModalUpdate from "./BrandModalUpdate";
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -26,6 +27,9 @@ const BrandTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
     const [openModalCreate, setOpenModalCreate] = useState(false);
+
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     useEffect(() => {
         fetchBrand();
@@ -95,7 +99,10 @@ const BrandTable = () => {
                         <EditTwoTone
                             twoToneColor={COLORS.primary}
                             style={{ cursor: "pointer", paddingLeft: 20 }}
-                            onClick={() => console.log('update brand')}
+                            onClick={() => {
+                                setOpenModalUpdate(true);
+                                setDataUpdate(record);
+                            }}
                         />
                     </>
                 )
@@ -194,7 +201,13 @@ const BrandTable = () => {
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchBrand={fetchBrand}
-
+            />
+            <BrandModalUpdate
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+                fetchBrand={fetchBrand}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
             />
         </>
     )
