@@ -1,4 +1,5 @@
 import axiosInstance from '../utils/axios-customize';
+import axios from 'axios';
 
 export const callFetchListBrands = async () => {
     try {
@@ -10,19 +11,37 @@ export const callFetchListBrands = async () => {
     }
 };
 
+// export const callCreateBrand = async (formData) => {
+//     try {
+//         const token = localStorage.getItem('accessToken');
+//         const response = await axiosInstance.post('/brands', {
+//             headers: {
+//                 'Authorization': `Bearer ${token}`,
+//                 'Content-Type': 'multipart/form-data'
+//             },
+//             body: formData,
+//         });
+//         return response;
+//     } catch (error) {
+//         console.error('Error fetching brands data:', error);
+//         throw error;
+//     }
+// };
+
 export const callCreateBrand = async (formData) => {
     try {
+        // console.log('>> check log formData: ', formData.getAll('request'));
         const token = localStorage.getItem('accessToken');
-        const response = await axiosInstance.post('/brands', {
+        const response = await axios.post('http://localhost:8080/api/v1/brands', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
             },
-            body: formData,
+            data: formData,
         });
-        return response.data;
+        return response;
     } catch (error) {
-        console.error('Error fetching brands data:', error);
+        console.error('Error create brands data:', error);
         throw error;
     }
 };

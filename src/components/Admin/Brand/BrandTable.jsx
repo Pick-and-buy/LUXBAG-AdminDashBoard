@@ -13,6 +13,7 @@ import { COLORS } from "../../../constants/theme";
 import { callFetchListBrands, callCreateBrand, getAllBrandByName, callDeleteBrand, callUpdateBrand } from "../../../services/brand";
 import BrandViewDetail from "./BrandViewDetail";
 import * as XLSX from 'xlsx';
+import BrandModalCreate from "./BrandModalCreate";
 
 const BrandTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -24,6 +25,7 @@ const BrandTable = () => {
 
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
+    const [openModalCreate, setOpenModalCreate] = useState(false);
 
     useEffect(() => {
         fetchBrand();
@@ -37,7 +39,6 @@ const BrandTable = () => {
             setListBrand(res.result);
             setTotal(listBrand.length);
         }
-
         setIsLoading(false);
     }
 
@@ -106,13 +107,10 @@ const BrandTable = () => {
         if (pagination && pagination.current !== current) {
             setCurrent(pagination.current)
         }
-
         if (pagination && pagination.pageSize !== pageSize) {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
-
-
         console.log('check params', pagination, filters, sorter, extra);
     }
 
@@ -130,17 +128,17 @@ const BrandTable = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brands</span>
-                <span style={{ display: 'flex', gap: 20 }}>
+                <span style={{ display: 'flex', gap: 10 }}>
                     <Button
                         icon={<ExportOutlined />}
                         type="primary"
-                    onClick={() => handleExportData()}
+                        onClick={() => handleExportData()}
                     >Export
                     </Button>
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
-                    // onClick={() => setOpenModalCreate(true)}
+                        onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
                 </span>
@@ -179,11 +177,17 @@ const BrandTable = () => {
                     />
                 </Col>
             </Row>
-            <BrandViewDetail 
+            <BrandViewDetail
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
-            />            
+            />
+            <BrandModalCreate 
+            openModalCreate={openModalCreate}
+            setOpenModalCreate={setOpenModalCreate}
+            fetchBrand={fetchBrand}
+            
+            />
         </>
     )
 }
