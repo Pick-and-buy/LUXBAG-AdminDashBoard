@@ -25,6 +25,9 @@ const BrandLinesTable = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
+
     useEffect(() => {
         fetchBrandLines();
     }, [current, pageSize]);
@@ -221,6 +224,11 @@ const BrandLinesTable = () => {
                     />
                 </Col>
             </Row>
+            <BrandLinesViewDetail
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />
         </>
     )
 }
