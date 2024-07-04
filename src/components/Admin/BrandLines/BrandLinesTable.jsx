@@ -116,8 +116,8 @@ const BrandLinesTable = () => {
                     text: 'Years',
                     value: 'year',
                     children: years.map(year => ({
-                        text: year.toString(),
-                        value: year.toString(),
+                        text: year,
+                        value: year,
                     })),
                 },
                 {
@@ -142,8 +142,8 @@ const BrandLinesTable = () => {
                         <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa thương hiệu"}
-                            description={"Bạn có chắc chắn muốn xóa thương hiệu này ?"}
-                            //onConfirm={() => handleDeleteBrand(record.name)}
+                            description={"Bạn có chắc chắn muốn xóa dòng thương hiệu này?"}
+                            onConfirm={() => handleDeleteBrandLines(record.lineName)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -162,6 +162,14 @@ const BrandLinesTable = () => {
         },
     ];
 
+    const handleDeleteBrandLines = async (brandLineName) => {
+        let query = `brandLineName=${brandLineName}`;
+        const res = await callDeleteBrandLines(query);
+        console.log('>>> check res DELETE BRAND-LINES: ', res);
+        message.success('Xóa dòng thương hiệu thành công');
+        fetchBrandLines();
+    }
+
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current !== current) {
             setCurrent(pagination.current)
@@ -173,6 +181,16 @@ const BrandLinesTable = () => {
         console.log('check params', pagination, filters, sorter, extra);
     }
 
+    const handleExportData = () => {
+        //https://stackoverflow.com/questions/70871254/how-can-i-export-a-json-object-to-excel-using-nextjs-react
+        if (listBrandLines.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listBrandLines);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "ExportBrand-Lines.csv");
+        }
+    }
+
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -181,6 +199,7 @@ const BrandLinesTable = () => {
                     <Button
                         icon={<ExportOutlined />}
                         type="primary"
+                        onClick={() => handleExportData()}
                     >Export
                     </Button>
                     <Button
