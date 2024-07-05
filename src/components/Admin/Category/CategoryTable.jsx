@@ -86,8 +86,9 @@ const CategoryTable = () => {
                     <>
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa thương hiệu"}
-                            description={"Bạn có chắc chắn muốn xóa thương hiệu này ?"}
+                            title={"Xác nhận xóa thể loại"}
+                            description={"Bạn có chắc chắn muốn xóa thể loại này?"}
+                            onConfirm={() => handleDeleteBrand(record.categoryName)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -106,6 +107,13 @@ const CategoryTable = () => {
         },
     ];
 
+    const handleDeleteBrand = async (name) => {
+        let query = `categoryName=${name}`;
+        await callDeleteCategory(query);
+        message.success('Xóa thương thể loại thành công');
+        fetchCategory();
+    }
+
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current !== current) {
             setCurrent(pagination.current)
@@ -117,14 +125,25 @@ const CategoryTable = () => {
         console.log('check params', pagination, filters, sorter, extra);
     }
 
+    const handleExportData = () => {
+        //https://stackoverflow.com/questions/70871254/how-can-i-export-a-json-object-to-excel-using-nextjs-react
+        if (listCategories.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listCategories);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "ExportCategory.csv");
+        }
+    }
+
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brands</span>
+                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Category</span>
                 <span style={{ display: 'flex', gap: 10 }}>
                     <Button
                         icon={<ExportOutlined />}
                         type="primary"
+                        onClick={() => handleExportData()}
                     >Export
                     </Button>
                     <Button
