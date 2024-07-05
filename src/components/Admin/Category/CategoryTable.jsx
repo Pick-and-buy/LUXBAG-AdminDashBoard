@@ -14,6 +14,7 @@ import { callFetchListCategories, callDeleteCategory } from "../../../services/c
 import * as XLSX from 'xlsx';
 import CategoryViewDetail from "./CategoryViewDetail";
 import CategoryModalCreate from "./CategoryModalCreate";
+import CategoryModalUpdate from "./CategoryModalUpdate";
 
 const CategoryTable = () => {
     const [listCategories, setListCategories] = useState([]);
@@ -27,6 +28,9 @@ const CategoryTable = () => {
     const [openViewDetail, setOpenViewDetail] = useState(false);
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
+
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     useEffect(() => {
         fetchCategory();
@@ -95,7 +99,7 @@ const CategoryTable = () => {
                             placement="leftTop"
                             title={"Xác nhận xóa thể loại"}
                             description={"Bạn có chắc chắn muốn xóa thể loại này?"}
-                            onConfirm={() => handleDeleteBrand(record.categoryName)}
+                            onConfirm={() => handleDeleteCategory(record.categoryName)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -106,7 +110,10 @@ const CategoryTable = () => {
                         <EditTwoTone
                             twoToneColor={COLORS.primary}
                             style={{ cursor: "pointer", paddingLeft: 20 }}
-                            onClick={() => console.log('EDIT')}
+                            onClick={() => {
+                                setOpenModalUpdate(true);
+                                setDataUpdate(record);
+                            }}
                         />
                     </>
                 )
@@ -114,7 +121,7 @@ const CategoryTable = () => {
         },
     ];
 
-    const handleDeleteBrand = async (name) => {
+    const handleDeleteCategory = async (name) => {
         let query = `categoryName=${name}`;
         await callDeleteCategory(query);
         message.success('Xóa thương thể loại thành công');
@@ -203,6 +210,13 @@ const CategoryTable = () => {
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchCategory={fetchCategory}
+            />
+            <CategoryModalUpdate 
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+                fetchCategory={fetchCategory}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
             />
         </>
     )
