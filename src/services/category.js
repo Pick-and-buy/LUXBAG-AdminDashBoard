@@ -1,5 +1,4 @@
 import axiosInstance from '../utils/axios-customize';
-import axios from 'axios';
 
 export const callFetchListCategories = async () => {
     try {
@@ -11,18 +10,10 @@ export const callFetchListCategories = async () => {
     }
 };
 
-export const callCreateCategory = async (formData) => {
+export const callCreateCategory = async (objectForm) => {
     try {
-        // console.log('>> check log formData: ', formData.getAll('request'));
-        const token = localStorage.getItem('accessToken');
-        const response = await axios.post('http://localhost:8080/api/v1/brand-lines/categories', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
-            },
-            data: formData,
-        });
-        return response;
+        const response = await axiosInstance.post('/brand-lines/categories',  objectForm);
+        return response.data;
     } catch (error) {
         console.error('Error create Category data:', error);
         throw error;

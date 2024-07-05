@@ -13,6 +13,7 @@ import { COLORS } from "../../../constants/theme";
 import { callFetchListCategories, callDeleteCategory } from "../../../services/category";
 import * as XLSX from 'xlsx';
 import CategoryViewDetail from "./CategoryViewDetail";
+import CategoryModalCreate from "./CategoryModalCreate";
 
 const CategoryTable = () => {
     const [listCategories, setListCategories] = useState([]);
@@ -24,6 +25,8 @@ const CategoryTable = () => {
 
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
+
+    const [openModalCreate, setOpenModalCreate] = useState(false);
 
     useEffect(() => {
         fetchCategory();
@@ -153,6 +156,7 @@ const CategoryTable = () => {
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
+                        onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
                 </span>
@@ -194,6 +198,11 @@ const CategoryTable = () => {
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
+            />
+            <CategoryModalCreate 
+                openModalCreate={openModalCreate}
+                setOpenModalCreate={setOpenModalCreate}
+                fetchCategory={fetchCategory}
             />
         </>
     )
