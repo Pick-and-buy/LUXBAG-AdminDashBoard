@@ -15,6 +15,7 @@ import BrandLinesViewDetail from "./BrandLinesViewDetail";
 import BrandLinesModalCreate from './BrandLinesModalCreate';
 import * as XLSX from 'xlsx';
 import moment from "moment/moment";
+import BrandLinesModalUpdate from './BrandLinesModalUpdate';
 
 const BrandLinesTable = () => {
     const [listBrand, setListBrand] = useState([]);
@@ -30,6 +31,9 @@ const BrandLinesTable = () => {
     const [openViewDetail, setOpenViewDetail] = useState(false);
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
+
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     useEffect(() => {
         fetchBrandLines();
@@ -157,7 +161,10 @@ const BrandLinesTable = () => {
                         <EditTwoTone
                             twoToneColor={COLORS.primary}
                             style={{ cursor: "pointer", paddingLeft: 20 }}
-                            onClick={() => console.log('Edit')}
+                            onClick={() => {
+                                setOpenModalUpdate(true);
+                                setDataUpdate(record);
+                            }}
                         />
                     </>
                 )
@@ -252,10 +259,17 @@ const BrandLinesTable = () => {
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
             />
-            <BrandLinesModalCreate 
+            <BrandLinesModalCreate
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchBrandLines={fetchBrandLines}
+            />
+            <BrandLinesModalUpdate
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+                fetchBrandLines={fetchBrandLines}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
             />
         </>
     )

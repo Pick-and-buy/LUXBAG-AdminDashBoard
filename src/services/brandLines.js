@@ -59,9 +59,9 @@ export const callDeleteBrandLines = async (query) => {
     }
 }
 
-export const callUpdateBrandLines = async (query, name) => {
+export const callUpdateBrandLines = async (query, objectForm) => {
     try {
-        const response = await axiosInstance.put(`/brands/name?${query}`, { name });
+        const response = await axiosInstance.put(`/brand-lines?${query}`,  objectForm );
         return response.data;
     } catch (error) {
         console.error('Error update brand-lines:', error);
