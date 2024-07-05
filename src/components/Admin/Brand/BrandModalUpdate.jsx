@@ -23,7 +23,6 @@ const BrandModalUpdate = (props) => {
         console.log(">>> check values <BrandModalCreate>: ", values);
         setIsSubmit(true);
         let query = `brandName=${dataUpdate.name}`;
-        console.log('>>> check query: ', query);
         const res = await callUpdateBrand(query, values.name);
         if(res && res.result) {
             message.success('Cập nhật thương hiệu thành công');
