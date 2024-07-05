@@ -12,6 +12,7 @@ import {
 import { COLORS } from "../../../constants/theme";
 import { callFetchListBrandLines, callDeleteBrandLines } from "../../../services/brandLines";
 import BrandLinesViewDetail from "./BrandLinesViewDetail";
+import BrandLinesModalCreate from './BrandLinesModalCreate';
 import * as XLSX from 'xlsx';
 import moment from "moment/moment";
 
@@ -27,6 +28,8 @@ const BrandLinesTable = () => {
 
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
+
+    const [openModalCreate, setOpenModalCreate] = useState(false);
 
     useEffect(() => {
         fetchBrandLines();
@@ -205,6 +208,7 @@ const BrandLinesTable = () => {
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
+                        onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
                 </span>
@@ -247,6 +251,11 @@ const BrandLinesTable = () => {
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
+            />
+            <BrandLinesModalCreate 
+                openModalCreate={openModalCreate}
+                setOpenModalCreate={setOpenModalCreate}
+                fetchBrandLines={fetchBrandLines}
             />
         </>
     )

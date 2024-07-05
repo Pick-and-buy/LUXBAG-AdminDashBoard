@@ -74,7 +74,7 @@ const BrandModalCreate = (props) => {
 
     const onClose = () => {
         formHook.resetFields();
-        setOpenModalCreate(false)
+        setOpenModalCreate(false);
     }
 
     return (
@@ -115,7 +115,7 @@ const BrandModalCreate = (props) => {
                         </Col>
                     </Row>
                     <Row gutter={12}>
-                        <Col span={12}>
+                        <Col span={24}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Ảnh Thương Hiệu"
