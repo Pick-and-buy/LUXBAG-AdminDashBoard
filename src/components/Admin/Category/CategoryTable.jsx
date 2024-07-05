@@ -12,6 +12,7 @@ import {
 import { COLORS } from "../../../constants/theme";
 import { callFetchListCategories, callDeleteCategory } from "../../../services/category";
 import * as XLSX from 'xlsx';
+import CategoryViewDetail from "./CategoryViewDetail";
 
 const CategoryTable = () => {
     const [listCategories, setListCategories] = useState([]);
@@ -20,6 +21,9 @@ const CategoryTable = () => {
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
 
     useEffect(() => {
         fetchCategory();
@@ -45,8 +49,8 @@ const CategoryTable = () => {
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
-                        // setDataViewDetail(record);
-                        // setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
                     }}>
                         {record.id}
                     </a>
@@ -186,6 +190,11 @@ const CategoryTable = () => {
                     />
                 </Col>
             </Row>
+            <CategoryViewDetail 
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />
         </>
     )
 }

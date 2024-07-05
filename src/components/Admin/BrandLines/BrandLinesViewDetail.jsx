@@ -68,7 +68,11 @@ const BrandLinesViewDetail = (props) => {
                     </Descriptions.Item>
                     <Descriptions.Item label="Chữ Ký">{dataViewDetail.signatureFeatures}</Descriptions.Item>
                     <Descriptions.Item label="Trạng Thái">
-                        <Badge status="processing" text="Đang hoạt động" />
+                        {dataViewDetail.availableStatus === true ?
+                            <Badge status="processing" text="Đang Hoạt Động" />
+                            :
+                            <Badge status="error" text="Dừng Hoạt Động" />
+                        }
                     </Descriptions.Item>
                     <Descriptions.Item label="Phạm Vi Giá">{dataViewDetail.priceRange}</Descriptions.Item>
                     <Descriptions.Item label="createdAt">
