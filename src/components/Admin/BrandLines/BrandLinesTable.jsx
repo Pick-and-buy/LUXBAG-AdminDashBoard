@@ -18,7 +18,6 @@ import moment from "moment/moment";
 import BrandLinesModalUpdate from './BrandLinesModalUpdate';
 
 const BrandLinesTable = () => {
-    const [listBrand, setListBrand] = useState([]);
     const [listBrandLines, setListBrandLines] = useState([]);
 
     const [current, setCurrent] = useState(1);

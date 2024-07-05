@@ -113,7 +113,6 @@ const BrandTable = () => {
     const handleDeleteBrand = async (name) => {
         let query = `brandName=${name}`;
         const res = await callDeleteBrand(query);
-        console.log('>>> check res DELETE BRAND: ', res);
         message.success('Xóa thương hiệu thành công');
         fetchBrand();
     }

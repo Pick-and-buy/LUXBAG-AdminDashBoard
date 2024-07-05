@@ -31,8 +31,8 @@ export const callCreateBrandLines = async (formData) => {
 
 export const getAllBrandLinesByName = async (query) => {
     try {
-        const response = await axiosInstance.get(`brand-lines/line-name?${query}`);
-        return response.data.result;
+        const response = await axiosInstance.get(`/brand-lines/line-name?${query}`);
+        return response.data;
     } catch (error) {
         console.error('Error Get All Brand-Lines By Name:', error);
         throw error;
@@ -41,8 +41,8 @@ export const getAllBrandLinesByName = async (query) => {
 
 export const getBrandLineByBrandName = async (query) => {
     try {
-        const response = await axiosInstance.get(`brand-lines/brand-name?${query}`);
-        return response.data.result;
+        const response = await axiosInstance.get(`/brand-lines/brand-name?${query}`);
+        return response.data;
     } catch (error) {
         console.error('Error Brand-Line By Brand Name:', error);
         throw error;

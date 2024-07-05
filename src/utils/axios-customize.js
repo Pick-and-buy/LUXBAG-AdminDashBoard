@@ -35,7 +35,7 @@ axiosInstance.interceptors.request.use(
 
 //interceptor: là cách mà can thiệp vào response trước khi server gửi về cho client
 axiosInstance.interceptors.response.use(function (response) {
-    console.log('>>> check response axios customize: ', response);
+    // console.log('>>> check response axios customize: ', response);
     return response;
 }, async function (error) {
 
