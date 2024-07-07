@@ -94,7 +94,7 @@ const NewsTable = () => {
                             placement="leftTop"
                             title={"Xác nhận xóa news"}
                             description={"Bạn có chắc chắn muốn xóa news?"}
-                            //onConfirm={() => handleDeleteNews(record.id)}
+                            onConfirm={() => handleDeleteNews(record.id)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -116,6 +116,13 @@ const NewsTable = () => {
         },
     ];
 
+    const handleDeleteNews = async (id) => {
+        let query = `newsId=${id}`;
+        const res = await callDeleteNews(query);
+        message.success('Xóa news thành công');
+        fetchNews();
+    }
+
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current !== current) {
             setCurrent(pagination.current)
@@ -132,12 +139,6 @@ const NewsTable = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brands</span>
                 <span style={{ display: 'flex', gap: 10 }}>
-                    <Button
-                        icon={<ExportOutlined />}
-                        type="primary"
-                        // onClick={() => handleExportData()}
-                    >Export
-                    </Button>
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
