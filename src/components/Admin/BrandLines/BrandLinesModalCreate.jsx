@@ -157,7 +157,7 @@ const BrandLinesModalCreate = (props) => {
                         <Col span={8}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Chữ Ký"
+                                label="Signature"
                                 name="signatureFeatures"
                                 rules={[
                                     {

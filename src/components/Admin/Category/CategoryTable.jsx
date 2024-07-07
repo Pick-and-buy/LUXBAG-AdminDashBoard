@@ -50,9 +50,10 @@ const CategoryTable = () => {
     const columns = [
         {
             title: 'Id',
-            width: '25%',
+            width: '10%',
             align: 'center',
             dataIndex: 'id',
+            ellipsis: true,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
@@ -92,6 +93,7 @@ const CategoryTable = () => {
         {
             title: 'Action',
             align: 'center',
+            width: '10%',
             render: (text, record, index) => {
                 return (
                     <>
@@ -124,7 +126,7 @@ const CategoryTable = () => {
     const handleDeleteCategory = async (name) => {
         let query = `categoryName=${name}`;
         await callDeleteCategory(query);
-        message.success('Xóa thương thể loại thành công');
+        message.success('Xóa thể loại thành công');
         fetchCategory();
     }
 

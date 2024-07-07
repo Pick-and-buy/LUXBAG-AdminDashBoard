@@ -86,9 +86,19 @@ const BrandLinesTable = () => {
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.lineName.includes(value),
+            render: (text, record, index) => {
+                return (
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
+                        {record.lineName}
+                    </a>
+                )
+            }
         },
         {
-            title: 'Chữ Ký',
+            title: 'Signature',
             align: 'center',
             dataIndex: 'signatureFeatures',
             sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
