@@ -21,7 +21,6 @@ const BrandModalCreate = (props) => {
         console.log(">>> check fileList <BrandModalCreate>: ", fileList);
 
         const formData = new FormData();
-
         const request = {
             name: values.name
         }
@@ -30,10 +29,18 @@ const BrandModalCreate = (props) => {
             formData.append('brandLogo', file.originFileObj);
         });
 
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
-        // await callCreateBrand(formData);
+        const res = await callCreateBrand(formData);
+        if (res && res.result) {
+            message.success('Tạo mới brand thành công')
+            formHook.resetFields();
+            setOpenModalCreate(false);
+            await props.fetchBrand();
+        } else {
+            notification.error({
+                message: 'Đã Có lỗi xảy ra',
+                description: res.message,
+            })
+        }
     }
 
     const getBase64 = (file) =>
@@ -68,6 +75,12 @@ const BrandModalCreate = (props) => {
         setPreviewImage(file.url || (file.preview));
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    const customRequest = ({ file, onSuccess }) => {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
     };
 
     const onClose = () => {
@@ -128,6 +141,7 @@ const BrandModalCreate = (props) => {
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}
                                     onPreview={handlePreview}
+                                    customRequest={customRequest}
                                 >
                                     <div>
                                         <PlusOutlined />
