@@ -21,7 +21,6 @@ const BrandModalCreate = (props) => {
         console.log(">>> check fileList <BrandModalCreate>: ", fileList);
 
         const formData = new FormData();
-
         const request = {
             name: values.name
         }
@@ -29,11 +28,23 @@ const BrandModalCreate = (props) => {
         fileList.forEach(file => {
             formData.append('brandLogo', file.originFileObj);
         });
-
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
-        // await callCreateBrand(formData);
+        
+        setIsSubmit(true);
+        //call API Create Brands
+        const res = await callCreateBrand(formData);
+        if (res && res.result) {
+            message.success('Tạo mới brand thành công')
+            formHook.resetFields();
+            setFileList([]);
+            setOpenModalCreate(false);
+            await props.fetchBrand();
+        } else {
+            notification.error({
+                message: 'Đã Có lỗi xảy ra',
+                description: res.message,
+            })
+        }
+        setIsSubmit(false);
     }
 
     const getBase64 = (file) =>
@@ -68,6 +79,14 @@ const BrandModalCreate = (props) => {
         setPreviewImage(file.url || (file.preview));
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    //fix lỗi khi upload ảnh sẽ tự động call API và khi endpoint ở back-end không có url trùng khớp sẽ lỗi 404
+    //customRequest: cho phép kiểm soát quá trình upload ảnh: default: success
+    const customRequest = ({ file, onSuccess }) => {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
     };
 
     const onClose = () => {
@@ -128,6 +147,7 @@ const BrandModalCreate = (props) => {
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}
                                     onPreview={handlePreview}
+                                    customRequest={customRequest}
                                 >
                                     <div>
                                         <PlusOutlined />

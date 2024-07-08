@@ -13,16 +13,14 @@ export const callFetchListBrandLines = async () => {
 
 export const callCreateBrandLines = async (formData) => {
     try {
-        // console.log('>> check log formData: ', formData.getAll('request'));
         const token = localStorage.getItem('accessToken');
-        const response = await axios.post('http://localhost:8080/api/v1/brand-lines', {
+        const response = await axios.post('http://localhost:8080/api/v1/brand-lines', formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
             },
-            data: formData,
         });
-        return response;
+        return response.data;
     } catch (error) {
         console.error('Error create brand-lines data:', error);
         throw error;

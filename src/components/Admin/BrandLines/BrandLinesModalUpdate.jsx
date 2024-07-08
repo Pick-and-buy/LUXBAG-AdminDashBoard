@@ -73,11 +73,14 @@ const BrandLinesModalUpdate = (props) => {
                 }
             })
             setFileList(brandLineImages);
-            // const dataUpdateWithMomentDate = {
-            //     ...dataUpdate,
-            //     launchDate: dataUpdate.launchDate ? moment(dataUpdate.launchDate) : null,
-            // }
-            // formHook.setFieldsValue(dataUpdateWithMomentDate);
+            const initValues = {
+                lineName: dataUpdate?.lineName,
+                signatureFeatures: dataUpdate?.signatureFeatures,
+                priceRange: dataUpdate?.priceRange,
+                launchDate: dataUpdate?.launchDate ? moment(dataUpdate.launchDate) : null,
+                description: dataUpdate?.description,
+            }
+            formHook.setFieldsValue(initValues);
             fetchAllBrand();
         }
         return () => {
@@ -116,13 +119,6 @@ const BrandLinesModalUpdate = (props) => {
                     style={{ width: '100%' }}
                     onFinish={onFinish}
                     autoComplete="off"
-                    initialValues={{
-                        lineName: dataUpdate?.lineName,
-                        signatureFeatures: dataUpdate?.signatureFeatures,
-                        priceRange: dataUpdate?.priceRange,
-                        launchDate: dataUpdate?.launchDate ? moment(dataUpdate.launchDate) : null,
-                        description: dataUpdate?.description,
-                    }}
                 >
                     <Row gutter={12}>
                         <Col span={12}>
@@ -138,7 +134,7 @@ const BrandLinesModalUpdate = (props) => {
                                 ]}
                             >
                                 <Select
-                                    defaultValue=""
+                                    defaultValue={dataUpdate?.brand?.name}
                                     showSearch
                                     allowClear
                                     options={listBrand}
@@ -165,12 +161,12 @@ const BrandLinesModalUpdate = (props) => {
                         <Col span={8}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Chữ Ký"
+                                label="Signature"
                                 name="signatureFeatures"
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Vui lòng nhập chữ ký',
+                                        message: 'Vui lòng nhập signature',
                                     },
                                 ]}
                             >

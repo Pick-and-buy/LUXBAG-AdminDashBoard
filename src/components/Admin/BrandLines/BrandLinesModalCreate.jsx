@@ -40,7 +40,6 @@ const BrandLinesModalCreate = (props) => {
 
     const onFinish = async (values) => {
         console.log(">>> check values <BrandLinesModalCreate>: ", values);
-        console.log('>> check fileList: ', fileList);
         const request = {
             brandRequest: { name: values.name },
             lineName: values.lineName,
@@ -49,13 +48,29 @@ const BrandLinesModalCreate = (props) => {
             priceRange: values.priceRange,
             launchDate: values.launchDate ? values.launchDate.format('YYYY-MM-DD') : null
         }
-        console.log('>>>check submit form brandLines: ', request);
+
         const formData = new FormData();
         formData.append('request', JSON.stringify(request));
         fileList.forEach(file => {
             formData.append('brandLineImages', file.originFileObj);
         });
-        //Submit Form Error
+        
+        setIsSubmit(true);
+        //Call API CREATE BrandLines
+        const res = await callCreateBrandLines(formData);
+        if (res && res.result) {
+            message.success('Tạo mới dòng thương hiệu thành công')
+            formHook.resetFields();
+            setFileList([]);
+            setOpenModalCreate(false);
+            await props.fetchBrandLines();
+        } else {
+            notification.error({
+                message: 'Đã Có lỗi xảy ra',
+                description: res.message,
+            })
+        }
+        setIsSubmit(false);
     }
 
     const getBase64 = (file) =>
@@ -79,7 +94,6 @@ const BrandLinesModalCreate = (props) => {
     };
 
     const handleChange = ({ fileList: newFileList }) => {
-        console.log('>>> check handleChange FileList: ', newFileList);
         setFileList(newFileList);
     }
 
@@ -90,6 +104,14 @@ const BrandLinesModalCreate = (props) => {
         setPreviewImage(file.url || (file.preview));
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    //fix lỗi khi upload ảnh sẽ tự động call API và khi endpoint ở back-end không có url trùng khớp sẽ lỗi 404
+    //customRequest: cho phép kiểm soát quá trình upload ảnh: default: success
+    const customRequest = ({ file, onSuccess }) => {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
     };
 
     const onClose = () => {
@@ -157,7 +179,7 @@ const BrandLinesModalCreate = (props) => {
                         <Col span={8}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Chữ Ký"
+                                label="Signature"
                                 name="signatureFeatures"
                                 rules={[
                                     {
@@ -233,6 +255,7 @@ const BrandLinesModalCreate = (props) => {
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}
                                     onPreview={handlePreview}
+                                    customRequest={customRequest}
                                 >
                                     <div>
                                         <PlusOutlined />

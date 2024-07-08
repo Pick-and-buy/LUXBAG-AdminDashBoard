@@ -11,37 +11,37 @@ export const callFetchListBrands = async () => {
     }
 };
 
-// export const callCreateBrand = async (formData) => {
-//     try {
-//         const token = localStorage.getItem('accessToken');
-//         const response = await axiosInstance.post('/brands', {
-//             headers: {
-//                 'Authorization': `Bearer ${token}`,
-//                 'Content-Type': 'multipart/form-data'
-//             },
-//             body: formData,
-//         });
-//         return response;
-//     } catch (error) {
-//         console.error('Error fetching brands data:', error);
-//         throw error;
-//     }
-// };
 
 export const callCreateBrand = async (formData) => {
     try {
-        // console.log('>> check log formData: ', formData.getAll('request'));
         const token = localStorage.getItem('accessToken');
-        const response = await axios.post('http://localhost:8080/api/v1/brands', {
+        const response = await axios.post('http://localhost:8080/api/v1/brands', formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
             },
-            data: formData,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error create brands data:', error);
+        throw error;
+    }
+};
+
+export const callCreateNews = async (formData) => {
+    try {
+         const token = localStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:8080/api/v1/news', formData, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            },
+            // body: formData,
         });
         return response;
     } catch (error) {
-        console.error('Error create brands data:', error);
+        console.error('Error create news data:', error);
         throw error;
     }
 };
