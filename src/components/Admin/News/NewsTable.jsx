@@ -13,6 +13,7 @@ import { COLORS } from "../../../constants/theme";
 import { callFetchListNews, callDeleteNews } from "../../../services/news";
 import * as XLSX from 'xlsx';
 import moment from "moment/moment";
+import NewsViewDetail from './NewsViewDetail';
 
 
 const NewsTable = () => {
@@ -23,6 +24,9 @@ const NewsTable = () => {
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
 
     useEffect(() => {
         fetchNews();
@@ -46,12 +50,11 @@ const NewsTable = () => {
             align: 'center',
             dataIndex: 'id',
             ellipsis: true,
-            sorter: (a, b) => a.id.length - b.id.length,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
-                        // setDataViewDetail(record);
-                        // setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
                     }}>
                         {record.id}
                     </a>
@@ -60,9 +63,10 @@ const NewsTable = () => {
         },
         {
             title: 'Tiêu Đề',
-            width: '50%',
+            width: '25%',
             align: 'center',
             dataIndex: 'title',
+            ellipsis: true,
             sorter: (a, b) => a.title.length - b.title.length,
             filters: listNews.map(news => ({
                 text: news.title,
@@ -71,11 +75,51 @@ const NewsTable = () => {
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.title.includes(value),
+            render: (text, record) => {
+                return (
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
+                        {record.title}
+                    </a>
+                )
+            }
+        },
+        {
+            title: 'Thương Hiệu',
+            width: '15%',
+            align: 'center',
+            dataIndex: 'name',
+            sorter: (a, b) => a?.brandLine?.brand?.name.length - b?.brandLine?.brand?.name.length,
+            filters: listNews.map(news => ({
+                text: news.brandLine?.brand?.name,
+                value: news.brandLine?.brand?.name,
+            })),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.brandLine?.brand?.name.includes(value),
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.brandLine?.brand?.name}
+                    </div>
+                )
+            },
         },
         {
             title: 'Dòng Thương Hiệu',
+            width: '15%',
             align: 'center',
             dataIndex: 'lineName',
+            sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
+            filters: listNews.map(news => ({
+                text: news.brandLine?.lineName,
+                value: news.brandLine?.lineName,
+            })),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record.brandLine?.lineName.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -85,7 +129,14 @@ const NewsTable = () => {
             },
         },
         {
+            title: 'Nội Dung',
+            align: 'center',
+            dataIndex: 'content',
+            ellipsis: true,
+        },
+        {
             title: 'Action',
+            width: '10%',
             align: 'center',
             render: (text, record, index) => {
                 return (
@@ -137,12 +188,12 @@ const NewsTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brands</span>
+                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>News</span>
                 <span style={{ display: 'flex', gap: 10 }}>
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
-                        // onClick={() => setOpenModalCreate(true)}
+                    // onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
                 </span>
@@ -152,7 +203,7 @@ const NewsTable = () => {
 
     return (
         <>
-        <Row>
+            <Row>
                 <Col span={24}>
                     <Table
                         title={renderHeader}
@@ -181,6 +232,11 @@ const NewsTable = () => {
                     />
                 </Col>
             </Row>
+            <NewsViewDetail
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />
         </>
     )
 }

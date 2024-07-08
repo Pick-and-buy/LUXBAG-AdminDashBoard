@@ -39,7 +39,6 @@ const BrandLinesViewDetail = (props) => {
     };
 
     const handlePreview = async (file) => {
-        console.log('>>> check file: ', file);
         if (file.url) {
             setPreviewImage(file.url || (file.preview));
             setPreviewOpen(true);

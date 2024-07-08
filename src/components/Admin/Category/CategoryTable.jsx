@@ -82,6 +82,14 @@ const CategoryTable = () => {
             title: 'Dòng Thương Hiệu',
             align: 'center',
             dataIndex: 'lineName',
+            sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
+            filters: listCategories.map(category => ({
+                text: category?.brandLine?.lineName,
+                value: category?.brandLine?.lineName,
+            })),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record?.brandLine?.lineName.includes(value),
             render: (text, record) => {
                 return (
                     <div>
