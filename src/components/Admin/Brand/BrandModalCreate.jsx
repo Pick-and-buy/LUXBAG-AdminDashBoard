@@ -77,6 +77,8 @@ const BrandModalCreate = (props) => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
+    //fix lỗi khi upload ảnh sẽ tự động call API và khi endpoint ở back-end không có url trùng khớp sẽ lỗi 404
+    //customRequest: cho phép kiểm soát quá trình upload ảnh: default: success
     const customRequest = ({ file, onSuccess }) => {
         setTimeout(() => {
             onSuccess("ok");

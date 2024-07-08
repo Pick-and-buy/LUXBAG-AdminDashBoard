@@ -62,11 +62,20 @@ const NewsModalCreate = (props) => {
         fileList.forEach(file => {
             formData.append('banner', file.originFileObj);
         });
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
         //call API Create News
-        await callCreateNews(request);
+        const res = await callCreateNews(formData);
+        console.log('>> check res submit: ', res);
+        if (res && res.result) {
+            message.success('Tạo mới news thành công')
+            formHook.resetFields();
+            setOpenModalCreate(false);
+            await props.fetchNews();
+        } else {
+            notification.error({
+                message: 'Đã Có lỗi xảy ra',
+                description: res.message,
+            })
+        }
     }
 
     const getBase64 = (file) =>
@@ -103,6 +112,8 @@ const NewsModalCreate = (props) => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
+    //fix lỗi khi upload ảnh sẽ tự động call API và khi endpoint ở back-end không có url trùng khớp sẽ lỗi 404
+    //customRequest: cho phép kiểm soát quá trình upload ảnh: default: success
     const customRequest = ({ file, onSuccess }) => {
         setTimeout(() => {
             onSuccess("ok");
