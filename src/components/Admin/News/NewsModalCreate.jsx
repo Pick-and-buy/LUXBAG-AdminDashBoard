@@ -62,12 +62,15 @@ const NewsModalCreate = (props) => {
         fileList.forEach(file => {
             formData.append('banner', file.originFileObj);
         });
+        
+        setIsSubmit(true);
         //call API Create News
         const res = await callCreateNews(formData);
         console.log('>> check res submit: ', res);
         if (res && res.result) {
             message.success('Tạo mới news thành công')
             formHook.resetFields();
+            setFileList([]);
             setOpenModalCreate(false);
             await props.fetchNews();
         } else {
@@ -76,6 +79,7 @@ const NewsModalCreate = (props) => {
                 description: res.message,
             })
         }
+        setIsSubmit(false);
     }
 
     const getBase64 = (file) =>

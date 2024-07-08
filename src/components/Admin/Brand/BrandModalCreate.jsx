@@ -28,11 +28,14 @@ const BrandModalCreate = (props) => {
         fileList.forEach(file => {
             formData.append('brandLogo', file.originFileObj);
         });
-
+        
+        setIsSubmit(true);
+        //call API Create Brands
         const res = await callCreateBrand(formData);
         if (res && res.result) {
             message.success('Tạo mới brand thành công')
             formHook.resetFields();
+            setFileList([]);
             setOpenModalCreate(false);
             await props.fetchBrand();
         } else {
@@ -41,6 +44,7 @@ const BrandModalCreate = (props) => {
                 description: res.message,
             })
         }
+        setIsSubmit(false);
     }
 
     const getBase64 = (file) =>
