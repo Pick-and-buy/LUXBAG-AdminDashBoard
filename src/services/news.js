@@ -50,11 +50,12 @@ export const callDeleteNews = async (query) => {
 
 export const callUpdateNews = async (query, formData) => {
     try {
-        const response = await axiosInstance.put(`/news?${query}`, {
+        const token = localStorage.getItem('accessToken');
+        const response = await axios.put(`http://localhost:8080/api/v1/news?${query}`, formData, {
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
             },
-            data: formData
         });
         return response.data;
     } catch (error) {

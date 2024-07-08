@@ -63,6 +63,11 @@ const NewsViewDetail = (props) => {
                     <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.brandLine?.brand?.name}</Descriptions.Item>
                     <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail?.brandLine?.lineName}</Descriptions.Item>
                     <Descriptions.Item label="Nội Dung" span={2}>{dataViewDetail.content}</Descriptions.Item>
+                    {dataViewDetail?.subTitle1 ?
+                        <Descriptions.Item label="SubTitle_1" span={2}>{dataViewDetail.subTitle1}</Descriptions.Item>
+                        :
+                        <></>
+                    }
                     {dataViewDetail?.subContent1 ?
                         <Descriptions.Item label="SubContent_1" span={2}>{dataViewDetail.subContent1}</Descriptions.Item>
                         :
@@ -75,6 +80,11 @@ const NewsViewDetail = (props) => {
                     }
                     {dataViewDetail?.subContent3 ?
                         <Descriptions.Item label="SubContent_3" span={2}>{dataViewDetail.subContent3}</Descriptions.Item>
+                        :
+                        <></>
+                    }
+                    {dataViewDetail?.subTitle2 ?
+                        <Descriptions.Item label="SubTitle_2" span={2}>{dataViewDetail.subTitle2}</Descriptions.Item>
                         :
                         <></>
                     }
@@ -95,6 +105,11 @@ const NewsViewDetail = (props) => {
                     }
                     {dataViewDetail?.subContent7 ?
                         <Descriptions.Item label="SubContent_7" span={2}>{dataViewDetail.subContent7}</Descriptions.Item>
+                        :
+                        <></>
+                    }
+                    {dataViewDetail?.subTitle3 ?
+                        <Descriptions.Item label="SubTitle_3" span={2}>{dataViewDetail.subTitle3}</Descriptions.Item>
                         :
                         <></>
                     }

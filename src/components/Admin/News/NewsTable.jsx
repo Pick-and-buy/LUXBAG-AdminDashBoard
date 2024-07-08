@@ -11,10 +11,9 @@ import {
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
 import { callFetchListNews, callDeleteNews } from "../../../services/news";
-import * as XLSX from 'xlsx';
-import moment from "moment/moment";
 import NewsViewDetail from './NewsViewDetail';
 import NewsModalCreate from "./NewsModalCreate";
+import NewsModalUpdate from "./NewsModalUpdate";
 
 
 const NewsTable = () => {
@@ -30,6 +29,9 @@ const NewsTable = () => {
     const [openViewDetail, setOpenViewDetail] = useState(false);
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
+
+    const [dataUpdate, setDataUpdate] = useState([]);
+    const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     useEffect(() => {
         fetchNews();
@@ -160,8 +162,8 @@ const NewsTable = () => {
                             twoToneColor={COLORS.primary}
                             style={{ cursor: "pointer", paddingLeft: 20 }}
                             onClick={() => {
-                                // setOpenModalUpdate(true);
-                                // setDataUpdate(record);
+                                setOpenModalUpdate(true);
+                                setDataUpdate(record);
                             }}
                         />
                     </>
@@ -240,10 +242,17 @@ const NewsTable = () => {
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
             />
-            <NewsModalCreate 
+            <NewsModalCreate
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchNews={fetchNews}
+            />
+            <NewsModalUpdate 
+                openModalUpdate={openModalUpdate}
+                setOpenModalUpdate={setOpenModalUpdate}
+                fetchNews={fetchNews}
+                dataUpdate={dataUpdate}
+                setDataUpdate={setDataUpdate}
             />
         </>
     )
