@@ -14,6 +14,7 @@ import { callFetchListNews, callDeleteNews } from "../../../services/news";
 import * as XLSX from 'xlsx';
 import moment from "moment/moment";
 import NewsViewDetail from './NewsViewDetail';
+import NewsModalCreate from "./NewsModalCreate";
 
 
 const NewsTable = () => {
@@ -27,6 +28,8 @@ const NewsTable = () => {
 
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
+
+    const [openModalCreate, setOpenModalCreate] = useState(false);
 
     useEffect(() => {
         fetchNews();
@@ -193,7 +196,7 @@ const NewsTable = () => {
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
-                    // onClick={() => setOpenModalCreate(true)}
+                        onClick={() => setOpenModalCreate(true)}
                     >Thêm mới
                     </Button>
                 </span>
@@ -236,6 +239,11 @@ const NewsTable = () => {
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
+            />
+            <NewsModalCreate 
+                openModalCreate={openModalCreate}
+                setOpenModalCreate={setOpenModalCreate}
+                fetchNews={fetchNews}
             />
         </>
     )
