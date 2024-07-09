@@ -61,12 +61,10 @@ const BrandLinesViewDetail = (props) => {
                 >
                     <Descriptions.Item label="Id">{dataViewDetail.id}</Descriptions.Item>
                     <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail.lineName}</Descriptions.Item>
+                    <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.brand?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Signature">{dataViewDetail.signatureFeatures}</Descriptions.Item>
                     <Descriptions.Item label="Mô Tả" span={2}>{dataViewDetail.description}</Descriptions.Item>
-                    <Descriptions.Item label="Ngày Phát Hành">
-                        {moment(dataViewDetail.launchDate).format("DD-MM-YYYY")}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Chữ Ký">{dataViewDetail.signatureFeatures}</Descriptions.Item>
-                    <Descriptions.Item label="Trạng Thái">
+                    <Descriptions.Item label="Trạng Thái" span={2}>
                         {dataViewDetail.availableStatus === true ?
                             <Badge status="processing" text="Đang Hoạt Động" />
                             :
@@ -74,6 +72,9 @@ const BrandLinesViewDetail = (props) => {
                         }
                     </Descriptions.Item>
                     <Descriptions.Item label="Phạm Vi Giá">{dataViewDetail.priceRange}</Descriptions.Item>
+                    <Descriptions.Item label="Ngày Phát Hành">
+                        {moment(dataViewDetail.launchDate).format("DD-MM-YYYY")}
+                    </Descriptions.Item>
                     <Descriptions.Item label="createdAt">
                         {moment(dataViewDetail.createdAt).format("DD-MM-YYYY")}
                     </Descriptions.Item>

@@ -10,14 +10,12 @@ import {
     ReloadOutlined
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
-import { callFetchListNews, callDeleteNews } from "../../../services/news";
-import NewsViewDetail from './NewsViewDetail';
-import NewsModalCreate from "./NewsModalCreate";
-import NewsModalUpdate from "./NewsModalUpdate";
+import moment from "moment/moment";
+import { callFetchListPosts, callDeletePost } from "../../../services/post";
+import PostViewDetail from "./PostViewDetail";
 
-
-const NewsTable = () => {
-    const [listNews, setListNews] = useState([]);
+const PostTable = () => {
+    const [listPosts, setListPosts] = useState([]);
 
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
@@ -28,28 +26,22 @@ const NewsTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
 
-    const [openModalCreate, setOpenModalCreate] = useState(false);
-
-    const [dataUpdate, setDataUpdate] = useState([]);
-    const [openModalUpdate, setOpenModalUpdate] = useState(false);
-
     useEffect(() => {
-        fetchNews();
+        fetchPosts();
     }, [current, pageSize]);
 
-    const fetchNews = async () => {
+    const fetchPosts = async () => {
         setIsLoading(true);
-        const res = await callFetchListNews();
-        console.log('>>> check call get all News <News Table>: ', res);
+        const res = await callFetchListPosts();
         if (res && res.result) {
-            setListNews(res.result);
+            setListPosts(res.result);
             setTotal(res.result.length);
         }
         setIsLoading(false);
     }
 
-    const getUniqueFilterValues = (listNews, keyPath) => {
-        const values = listNews.map(news => keyPath.reduce((acc, key) => acc?.[key], news)).filter(Boolean);
+    const getUniqueFilterValues = (posts, keyPath) => {
+        const values = posts.map(post => keyPath.reduce((acc, key) => acc?.[key], post)).filter(Boolean);
         return [...new Set(values)].map(value => ({ text: value, value }));
     }
 
@@ -72,20 +64,16 @@ const NewsTable = () => {
             }
         },
         {
-            title: 'Tiêu Đề',
-            width: '25%',
+            title: 'Tiêu Đề Bài Đăng',
+            width: '20%',
             align: 'center',
             dataIndex: 'title',
-            ellipsis: true,
             sorter: (a, b) => a.title.length - b.title.length,
-            filters: listNews.map(news => ({
-                text: news.title,
-                value: news.title,
-            })),
+            filters: getUniqueFilterValues(listPosts, ['title',]),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.title.includes(value),
-            render: (text, record) => {
+            render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
@@ -97,85 +85,111 @@ const NewsTable = () => {
             }
         },
         {
-            title: 'Thương Hiệu',
-            width: '15%',
+            title: 'Tên Sản Phẩm',
+            width: '20%',
             align: 'center',
-            dataIndex: 'name',
-            sorter: (a, b) => a?.brandLine?.brand?.name.length - b?.brandLine?.brand?.name.length,
-            filters: getUniqueFilterValues(listNews, ['brandLine', 'brand', 'name']),
+            dataIndex: 'productName',
+            sorter: (a, b) => a?.product?.name.length - b?.product?.name.length,
+            filters: getUniqueFilterValues(listPosts, ['product', 'name']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.brandLine?.brand?.name.includes(value),
+            onFilter: (value, record) => record?.product?.name.includes(value),
             render: (text, record) => {
                 return (
                     <div>
-                        {record?.brandLine?.brand?.name}
+                        {record?.product?.name}
                     </div>
                 )
             },
         },
         {
-            title: 'Dòng Thương Hiệu',
-            width: '15%',
-            align: 'center',
-            dataIndex: 'lineName',
-            sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
-            filters: getUniqueFilterValues(listNews, ['brandLine', 'lineName']),
-            filterMode: 'tree',
-            filterSearch: true,
-            onFilter: (value, record) => record.brandLine?.lineName.includes(value),
-            render: (text, record) => {
-                return (
-                    <div>
-                        {record.brandLine.lineName}
-                    </div>
-                )
-            },
-        },
-        {
-            title: 'Nội Dung',
-            align: 'center',
-            dataIndex: 'content',
-            ellipsis: true,
-        },
-        {
-            title: 'Action',
+            title: 'Người Đăng Bài',
             width: '10%',
             align: 'center',
-            render: (text, record, index) => {
+            dataIndex: 'username',
+            filters: getUniqueFilterValues(listPosts, ['user', 'username']),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record?.user?.username.includes(value),
+            render: (text, record) => {
                 return (
-                    <>
-                        <Popconfirm
-                            placement="leftTop"
-                            title={"Xác nhận xóa news"}
-                            description={"Bạn có chắc chắn muốn xóa news?"}
-                            onConfirm={() => handleDeleteNews(record.id)}
-                            onText="Xác nhận"
-                            cancelText="Hủy"
-                        >
-                            <DeleteTwoTone
-                                twoToneColor={COLORS.primary}
-                            />
-                        </Popconfirm>
-                        <EditTwoTone
-                            twoToneColor={COLORS.primary}
-                            style={{ cursor: "pointer", paddingLeft: 20 }}
-                            onClick={() => {
-                                setOpenModalUpdate(true);
-                                setDataUpdate(record);
-                            }}
-                        />
-                    </>
+                    <div>
+                        {record?.user?.username}
+                    </div>
                 )
-            }
+            },
         },
+        {
+            title: 'Thương Hiệu',
+            width: '10%',
+            align: 'center',
+            dataIndex: 'brandName',
+            sorter: (a, b) => a?.product?.brand?.name.length - b?.product?.brand?.name.length,
+            filters: getUniqueFilterValues(listPosts, ['product', 'brand', 'name']),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record?.product?.brand?.name.includes(value),
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.product?.brand?.name}
+                    </div>
+                )
+            },
+        },
+        {
+            title: 'Giá Sản Phẩm',
+            width: '10%',
+            align: 'center',
+            dataIndex: 'price',
+            sorter: (a, b) => a?.product?.price - b?.product?.price,
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.product?.price}
+                    </div>
+                )
+            },
+        },
+        // {
+        //     title: 'Action',
+        //     width: '10%',
+        //     align: 'center',
+        //     render: (text, record, index) => {
+        //         return (
+        //             <>
+        //                 <Popconfirm
+        //                     placement="leftTop"
+        //                     title={"Xác nhận xóa thương hiệu"}
+        //                     description={"Bạn có chắc chắn muốn xóa bài đăng này?"}
+        //                     onConfirm={() => handleDeletePost(record.id)}
+        //                     onText="Xác nhận"
+        //                     cancelText="Hủy"
+        //                 >
+        //                     <DeleteTwoTone
+        //                         twoToneColor={COLORS.primary}
+        //                     />
+        //                 </Popconfirm>
+        //                 <EditTwoTone
+        //                     twoToneColor={COLORS.primary}
+        //                     style={{ cursor: "pointer", paddingLeft: 20 }}
+        //                     onClick={() => {
+        //                         //setOpenModalUpdate(true);
+        //                         //setDataUpdate(record);
+        //                     }}
+        //                 />
+        //             </>
+        //         )
+        //     }
+        // },
     ];
 
-    const handleDeleteNews = async (id) => {
-        let query = `newsId=${id}`;
-        const res = await callDeleteNews(query);
-        message.success('Xóa news thành công');
-        fetchNews();
+    const handleDeletePost = async (postId) => {
+        let query = `postId=${postId}`;
+        const res = await callDeletePost(query);
+        console.log('>>> check res DELETE Post: ', res);
+        message.success('Xóa dòng bài đăng thành công');
+        fetchBrandLines();
     }
 
     const onChange = (pagination, filters, sorter, extra) => {
@@ -186,34 +200,25 @@ const NewsTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
-        console.log('check params', pagination, filters, sorter, extra);
     }
 
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>News</span>
-                <span style={{ display: 'flex', gap: 10 }}>
-                    <Button
-                        icon={<PlusOutlined />}
-                        type="primary" danger
-                        onClick={() => setOpenModalCreate(true)}
-                    >Thêm mới
-                    </Button>
-                </span>
+                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brand-Lines</span>
             </div>
         )
     }
 
     return (
         <>
-            <Row>
+             <Row>
                 <Col span={24}>
                     <Table
                         title={renderHeader}
                         loading={isLoading}
                         columns={columns}
-                        dataSource={listNews}
+                        dataSource={listPosts}
                         onChange={onChange}
                         rowKey="id"
                         pagination={
@@ -236,25 +241,13 @@ const NewsTable = () => {
                     />
                 </Col>
             </Row>
-            <NewsViewDetail
+            <PostViewDetail 
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
-            />
-            <NewsModalCreate
-                openModalCreate={openModalCreate}
-                setOpenModalCreate={setOpenModalCreate}
-                fetchNews={fetchNews}
-            />
-            <NewsModalUpdate 
-                openModalUpdate={openModalUpdate}
-                setOpenModalUpdate={setOpenModalUpdate}
-                fetchNews={fetchNews}
-                dataUpdate={dataUpdate}
-                setDataUpdate={setDataUpdate}
             />
         </>
     )
 }
 
-export default NewsTable;
+export default PostTable;

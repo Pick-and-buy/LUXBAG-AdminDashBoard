@@ -57,6 +57,11 @@ const BrandLinesTable = () => {
         moment(item.launchDate).format('MM')
     ))];
 
+    const getUniqueFilterValues = (listBrandLine, keyPath) => {
+        const values = listBrandLine.map(brandLine => keyPath.reduce((acc, key) => acc?.[key], brandLine)).filter(Boolean);
+        return [...new Set(values)].map(value => ({ text: value, value }));
+    }
+
     const columns = [
         {
             title: 'Id',
@@ -102,10 +107,11 @@ const BrandLinesTable = () => {
             align: 'center',
             dataIndex: 'signatureFeatures',
             sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
-            filters: listBrandLines.map(brandLines => ({
-                text: brandLines.signatureFeatures,
-                value: brandLines.signatureFeatures,
-            })),
+            // filters: listBrandLines.map(brandLines => ({
+            //     text: brandLines.signatureFeatures,
+            //     value: brandLines.signatureFeatures,
+            // })),
+            filters: getUniqueFilterValues(listBrandLines, ['signatureFeatures']),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.signatureFeatures.includes(value),

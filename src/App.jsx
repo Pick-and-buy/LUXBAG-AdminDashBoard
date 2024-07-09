@@ -24,6 +24,7 @@ import AdminDashboard from './pages/admin/index.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import UserTable from './components/Admin/User/UserTable';
 import NewsTable from './components/Admin/News/NewsTable';
+import PostTable from './components/Admin/Post/PostTable.jsx';
 
 const Layout = () => {
   return (
@@ -107,6 +108,10 @@ export default function App() {
         {
           path: "news",
           element: <NewsTable />,
+        },
+        {
+          path: "posts",
+          element: <PostTable />,
         },
       ],
     },
