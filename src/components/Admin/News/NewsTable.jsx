@@ -48,6 +48,11 @@ const NewsTable = () => {
         setIsLoading(false);
     }
 
+    const getUniqueFilterValues = (listNews, keyPath) => {
+        const values = listNews.map(news => keyPath.reduce((acc, key) => acc?.[key], news)).filter(Boolean);
+        return [...new Set(values)].map(value => ({ text: value, value }));
+    }
+
     const columns = [
         {
             title: 'Id',
@@ -97,10 +102,7 @@ const NewsTable = () => {
             align: 'center',
             dataIndex: 'name',
             sorter: (a, b) => a?.brandLine?.brand?.name.length - b?.brandLine?.brand?.name.length,
-            filters: listNews.map(news => ({
-                text: news.brandLine?.brand?.name,
-                value: news.brandLine?.brand?.name,
-            })),
+            filters: getUniqueFilterValues(listNews, ['brandLine', 'brand', 'name']),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.brandLine?.brand?.name.includes(value),
@@ -118,10 +120,7 @@ const NewsTable = () => {
             align: 'center',
             dataIndex: 'lineName',
             sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
-            filters: listNews.map(news => ({
-                text: news.brandLine?.lineName,
-                value: news.brandLine?.lineName,
-            })),
+            filters: getUniqueFilterValues(listNews, ['brandLine', 'lineName']),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.brandLine?.lineName.includes(value),

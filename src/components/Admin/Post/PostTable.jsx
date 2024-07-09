@@ -33,12 +33,16 @@ const PostTable = () => {
     const fetchPosts = async () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
-        console.log('>>> check call get all Posts <Posts Table>: ', res);
         if (res && res.result) {
             setListPosts(res.result);
             setTotal(res.result.length);
         }
         setIsLoading(false);
+    }
+
+    const getUniqueFilterValues = (posts, keyPath) => {
+        const values = posts.map(post => keyPath.reduce((acc, key) => acc?.[key], post)).filter(Boolean);
+        return [...new Set(values)].map(value => ({ text: value, value }));
     }
 
     const columns = [
@@ -61,13 +65,11 @@ const PostTable = () => {
         },
         {
             title: 'Tiêu Đề Bài Đăng',
+            width: '20%',
             align: 'center',
             dataIndex: 'title',
             sorter: (a, b) => a.title.length - b.title.length,
-            filters: listPosts.map(post => ({
-                text: post.title,
-                value: post.title,
-            })),
+            filters: getUniqueFilterValues(listPosts, ['title',]),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.title.includes(value),
@@ -84,13 +86,11 @@ const PostTable = () => {
         },
         {
             title: 'Tên Sản Phẩm',
+            width: '20%',
             align: 'center',
             dataIndex: 'productName',
             sorter: (a, b) => a?.product?.name.length - b?.product?.name.length,
-            filters: listPosts.map(post => ({
-                text: post?.product?.name,
-                value: post?.product?.name,
-            })),
+            filters: getUniqueFilterValues(listPosts, ['product', 'name']),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record?.product?.name.includes(value),
@@ -103,15 +103,29 @@ const PostTable = () => {
             },
         },
         {
+            title: 'Người Đăng Bài',
+            width: '10%',
+            align: 'center',
+            dataIndex: 'username',
+            filters: getUniqueFilterValues(listPosts, ['user', 'username']),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record?.user?.username.includes(value),
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.user?.username}
+                    </div>
+                )
+            },
+        },
+        {
             title: 'Thương Hiệu',
             width: '10%',
             align: 'center',
             dataIndex: 'brandName',
             sorter: (a, b) => a?.product?.brand?.name.length - b?.product?.brand?.name.length,
-            filters: listPosts.map(post => ({
-                text: post?.product?.brand?.name,
-                value: post?.product?.brand?.name,
-            })),
+            filters: getUniqueFilterValues(listPosts, ['product', 'brand', 'name']),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record?.product?.brand?.name.includes(value),
@@ -137,52 +151,46 @@ const PostTable = () => {
                 )
             },
         },
-        {
-            title: 'Màu Sắc',
-            width: '10%',
-            align: 'center',
-            dataIndex: 'color',
-            sorter: (a, b) => a?.product?.color - b?.product?.color,
-            render: (text, record) => {
-                return (
-                    <div>
-                        {record?.product?.color}
-                    </div>
-                )
-            },
-        },
-        {
-            title: 'Action',
-            width: '10%',
-            align: 'center',
-            render: (text, record, index) => {
-                return (
-                    <>
-                        <Popconfirm
-                            placement="leftTop"
-                            title={"Xác nhận xóa thương hiệu"}
-                            description={"Bạn có chắc chắn muốn xóa bài đăng này?"}
-                            //onConfirm={() => handleDeletePost(record.id)}
-                            onText="Xác nhận"
-                            cancelText="Hủy"
-                        >
-                            <DeleteTwoTone
-                                twoToneColor={COLORS.primary}
-                            />
-                        </Popconfirm>
-                        <EditTwoTone
-                            twoToneColor={COLORS.primary}
-                            style={{ cursor: "pointer", paddingLeft: 20 }}
-                            onClick={() => {
-                                //setOpenModalUpdate(true);
-                                //setDataUpdate(record);
-                            }}
-                        />
-                    </>
-                )
-            }
-        },
+        // {
+        //     title: 'Action',
+        //     width: '10%',
+        //     align: 'center',
+        //     render: (text, record, index) => {
+        //         return (
+        //             <>
+        //                 <Popconfirm
+        //                     placement="leftTop"
+        //                     title={"Xác nhận xóa thương hiệu"}
+        //                     description={"Bạn có chắc chắn muốn xóa bài đăng này?"}
+        //                     onConfirm={() => handleDeletePost(record.id)}
+        //                     onText="Xác nhận"
+        //                     cancelText="Hủy"
+        //                 >
+        //                     <DeleteTwoTone
+        //                         twoToneColor={COLORS.primary}
+        //                     />
+        //                 </Popconfirm>
+        //                 <EditTwoTone
+        //                     twoToneColor={COLORS.primary}
+        //                     style={{ cursor: "pointer", paddingLeft: 20 }}
+        //                     onClick={() => {
+        //                         //setOpenModalUpdate(true);
+        //                         //setDataUpdate(record);
+        //                     }}
+        //                 />
+        //             </>
+        //         )
+        //     }
+        // },
     ];
+
+    const handleDeletePost = async (postId) => {
+        let query = `postId=${postId}`;
+        const res = await callDeletePost(query);
+        console.log('>>> check res DELETE Post: ', res);
+        message.success('Xóa dòng bài đăng thành công');
+        fetchBrandLines();
+    }
 
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current !== current) {
@@ -198,14 +206,6 @@ const PostTable = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brand-Lines</span>
-                {/* <span style={{ display: 'flex', gap: 10 }}>
-                    <Button
-                        icon={<PlusOutlined />}
-                        type="primary" danger
-                        onClick={() => setOpenModalCreate(true)}
-                    >Thêm mới
-                    </Button>
-                </span> */}
             </div>
         )
     }

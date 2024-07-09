@@ -47,6 +47,11 @@ const CategoryTable = () => {
         setIsLoading(false);
     }
 
+    const getUniqueFilterValues = (listCategory, keyPath) => {
+        const values = listCategory.map(category => keyPath.reduce((acc, key) => acc?.[key], category)).filter(Boolean);
+        return [...new Set(values)].map(value => ({ text: value, value }));
+    }
+
     const columns = [
         {
             title: 'Id',
@@ -83,10 +88,7 @@ const CategoryTable = () => {
             align: 'center',
             dataIndex: 'lineName',
             sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
-            filters: listCategories.map(category => ({
-                text: category?.brandLine?.lineName,
-                value: category?.brandLine?.lineName,
-            })),
+            filters: getUniqueFilterValues(listCategories, ['brandLine', 'lineName']),
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record?.brandLine?.lineName.includes(value),
