@@ -131,7 +131,7 @@ const NewsModalCreate = (props) => {
 
     return (
         <>
-            <Modal title="Thêm Mới Bài Báo"
+            <Modal title="Thêm Mới Tin Tức"
                 open={openModalCreate}
                 onOk={() => { formHook.submit() }}
                 onCancel={onClose}

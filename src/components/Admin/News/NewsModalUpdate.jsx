@@ -160,7 +160,7 @@ const NewsModalUpdate = (props) => {
 
     return (
         <>
-            <Modal title="Cập Nhật News"
+            <Modal title="Cập Nhật Tin Tức"
                 open={openModalUpdate}
                 onOk={() => { formHook.submit() }}
                 onCancel={onClose}
