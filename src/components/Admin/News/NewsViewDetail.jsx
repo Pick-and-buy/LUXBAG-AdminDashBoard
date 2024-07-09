@@ -54,7 +54,7 @@ const NewsViewDetail = (props) => {
                 open={openViewDetail}
             >
                 <Descriptions
-                    title="Thông tin thương hiệu"
+                    title="Thông tin tin tức"
                     bordered
                     column={2}
                 >
