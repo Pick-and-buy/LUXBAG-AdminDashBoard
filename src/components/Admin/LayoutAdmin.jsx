@@ -11,6 +11,11 @@ import {
     DownOutlined,
     BlockOutlined,
     PaperClipOutlined,
+    FileProtectOutlined,
+    ContactsOutlined,
+    FileTextOutlined,
+    ReadOutlined,
+    ProfileOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, Avatar, Dropdown, Space, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,12 +46,12 @@ const items = [
             {
                 label: <Link to='/admin/brands'>Brand</Link>,
                 key: 'brands',
-                icon: <TeamOutlined />,
+                icon: <FileTextOutlined />,
             },
             {
                 label: <Link to='/admin/brandLines'>Brand Lines</Link>,
                 key: 'brandLines',
-                icon: <TeamOutlined />,
+                icon: <ContactsOutlined />,
             }
 
         ]
@@ -54,12 +59,17 @@ const items = [
     {
         label: <Link to='/admin/category'>Manage Categories</Link>,
         key: 'category',
-        icon: <ExceptionOutlined />,
+        icon: <ProfileOutlined />,
     },
     {
         label: <Link to='/admin/news'>Manage News</Link>,
         key: 'news',
-        icon: <PaperClipOutlined />,
+        icon: <ReadOutlined />,
+    },
+    {
+        label: <Link to='/admin/posts'>Manage Posts</Link>,
+        key: 'posts',
+        icon: <FileProtectOutlined />,
     },
 ];
 
