@@ -12,6 +12,7 @@ import {
 import { COLORS } from "../../../constants/theme";
 import moment from "moment/moment";
 import { callFetchListPosts, callDeletePost } from "../../../services/post";
+import PostViewDetail from "./PostViewDetail";
 
 const PostTable = () => {
     const [listPosts, setListPosts] = useState([]);
@@ -21,6 +22,9 @@ const PostTable = () => {
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
 
     useEffect(() => {
         fetchPosts();
@@ -47,8 +51,8 @@ const PostTable = () => {
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
-                        //setDataViewDetail(record);
-                        //setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
                     }}>
                         {record.id}
                     </a>
@@ -70,8 +74,8 @@ const PostTable = () => {
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
-                        //setDataViewDetail(record);
-                        //setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
                     }}>
                         {record.title}
                     </a>
@@ -237,6 +241,11 @@ const PostTable = () => {
                     />
                 </Col>
             </Row>
+            <PostViewDetail 
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />
         </>
     )
 }
