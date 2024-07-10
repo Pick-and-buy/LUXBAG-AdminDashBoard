@@ -1,8 +1,12 @@
 import './footer.scss';
 
 const Footer = () => {
-    return(
-        <>Footer</>
+    return (
+        <footer>
+            <div>
+                Giá Tốt ©{new Date().getFullYear()}
+            </div>
+        </footer>
     )
 }
 
