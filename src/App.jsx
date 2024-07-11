@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import Login from './pages/login/index.jsx';
 import ContactPage from './pages/contact/index.jsx';
-import BookPage from './pages/book/index.jsx';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home/index.jsx';
@@ -48,7 +47,6 @@ export default function App() {
     if (window.location.pathname === '/login') return;
 
     const res = await callFetchAccount();
-    console.log(">>> check res callFetchAccount <App.js>: ", res);
     if (res && res.result) {
       dispatch(doGetAccountAction(res.result))
     }
@@ -70,10 +68,6 @@ export default function App() {
         {
           path: "contact",
           element: <ContactPage />,
-        },
-        {
-          path: "book",
-          element: <BookPage />,
         },
       ],
     },
