@@ -10,13 +10,13 @@ const Home = () => {
     const [listBrand, setListBrand] = useState([]);
 
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
 
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=-sold");
+    const [sortQuery, setSortQuery] = useState("");
 
     const [form] = Form.useForm();
 
@@ -37,7 +37,10 @@ const Home = () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
         if (res && res.result) {
-            setListPosts(res.result);
+            const start = (current - 1) * pageSize;
+            const end = current * pageSize;
+            setListPosts(res.result.slice(start, end));
+            // setListPosts(res.result);
             setTotal(res.result.length);
         }
         setIsLoading(false);
