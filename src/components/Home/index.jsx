@@ -16,7 +16,7 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("");
+    const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
 
     const [form] = Form.useForm();
 
@@ -37,10 +37,18 @@ const Home = () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
         if (res && res.result) {
+            let posts = [...res.result];
+            if(sortQuery === 'sort=price') {
+                posts.sort((a, b) => (a.product.price ?? 0) - (b.product.price ?? 0));
+            } else if(sortQuery === 'sort=-price'){
+                posts.sort((a, b) => (b.product.price ?? 0) - (a.product.price ?? 0));
+            } else if (sortQuery === 'sort=-updatedAt') {
+                posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            }
             const start = (current - 1) * pageSize;
             const end = current * pageSize;
-            setListPosts(res.result.slice(start, end));
-            // setListPosts(res.result);
+            setListPosts(posts.slice(start, end));
+            //setListPosts(res.result.slice(start, end));
             setTotal(res.result.length);
         }
         setIsLoading(false);
@@ -52,11 +60,8 @@ const Home = () => {
 
     useEffect(() => {
         console.log('>>> check list post: ', listPosts);
-        console.log('>>> check url: ', listPosts[0]?.product?.images[0]?.imageUrl);
         fetchPost();
     }, [current, pageSize, filter, sortQuery]);
-
-
 
     const handleChangeFilter = (changedValues, values) => {
         console.log(">>> check handleChangeFilter", changedValues, values)
@@ -77,11 +82,11 @@ const Home = () => {
     }
 
     const items = [
-        {
-            key: "1",
-            label: `Phổ biến`,
-            children: <></>,
-        },
+        // {
+        //     key: "1",
+        //     label: `Lượt Yêu Thích`,
+        //     children: <></>,
+        // },
         {
             key: 'sort=-updatedAt',
             label: `Hàng Mới`,
@@ -156,7 +161,7 @@ const Home = () => {
                             <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
                                 <Row >
                                     <Tabs
-                                        defaultActiveKey="1"
+                                        defaultActiveKey="sort=-updatedAt"
                                         items={items}
                                         onChange={(value) => { setSortQuery(value) }}
                                         style={{ overflowX: "auto" }}
