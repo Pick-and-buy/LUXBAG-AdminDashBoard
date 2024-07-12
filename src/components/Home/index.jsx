@@ -45,11 +45,17 @@ const Home = () => {
             } else if (sortQuery === 'sort=-updatedAt') {
                 posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             }
+
+            // Filter by Brand Name
+            if (filter.brand) {
+                posts = posts.filter(post => filter.brand.includes(post.product.brand.name));
+            } 
+
             const start = (current - 1) * pageSize;
             const end = current * pageSize;
             setListPosts(posts.slice(start, end));
-            //setListPosts(res.result.slice(start, end));
-            setTotal(res.result.length);
+            //pagination
+            setTotal(posts.length);
         }
         setIsLoading(false);
     }
@@ -59,7 +65,6 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        console.log('>>> check list post: ', listPosts);
         fetchPost();
     }, [current, pageSize, filter, sortQuery]);
 
@@ -68,7 +73,7 @@ const Home = () => {
     }
 
     const onFinish = (values) => {
-        console.log('>>> check values Home Page: ', values);
+        setFilter(values);
     }
 
     const handleOnchangePage = (pagination) => {
@@ -114,7 +119,11 @@ const Home = () => {
                                 <span> <FilterTwoTone />
                                     <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
                                 </span>
-                                <ReloadOutlined title="Reset" onClick={() => form.resetFields()} />
+                                <ReloadOutlined title="Reset" onClick={() => {
+                                    form.resetFields();
+                                    setFilter('');
+                                }} 
+                                />
                             </div>
                             <Divider />
                             <Form
