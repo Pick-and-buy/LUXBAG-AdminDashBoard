@@ -16,7 +16,7 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("");
+    const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
 
     const [form] = Form.useForm();
 
@@ -37,11 +37,25 @@ const Home = () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
         if (res && res.result) {
+            let posts = [...res.result];
+            if(sortQuery === 'sort=price') {
+                posts.sort((a, b) => (a.product.price ?? 0) - (b.product.price ?? 0));
+            } else if(sortQuery === 'sort=-price'){
+                posts.sort((a, b) => (b.product.price ?? 0) - (a.product.price ?? 0));
+            } else if (sortQuery === 'sort=-updatedAt') {
+                posts.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            }
+
+            // Filter by Brand Name
+            if (filter.brand) {
+                posts = posts.filter(post => filter.brand.includes(post.product.brand.name));
+            } 
+
             const start = (current - 1) * pageSize;
             const end = current * pageSize;
-            setListPosts(res.result.slice(start, end));
-            // setListPosts(res.result);
-            setTotal(res.result.length);
+            setListPosts(posts.slice(start, end));
+            //pagination
+            setTotal(posts.length);
         }
         setIsLoading(false);
     }
@@ -51,19 +65,15 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        console.log('>>> check list post: ', listPosts);
-        console.log('>>> check url: ', listPosts[0]?.product?.images[0]?.imageUrl);
         fetchPost();
     }, [current, pageSize, filter, sortQuery]);
-
-
 
     const handleChangeFilter = (changedValues, values) => {
         console.log(">>> check handleChangeFilter", changedValues, values)
     }
 
     const onFinish = (values) => {
-        console.log('>>> check values Home Page: ', values);
+        setFilter(values);
     }
 
     const handleOnchangePage = (pagination) => {
@@ -77,11 +87,11 @@ const Home = () => {
     }
 
     const items = [
-        {
-            key: "1",
-            label: `Phổ biến`,
-            children: <></>,
-        },
+        // {
+        //     key: "1",
+        //     label: `Lượt Yêu Thích`,
+        //     children: <></>,
+        // },
         {
             key: 'sort=-updatedAt',
             label: `Hàng Mới`,
@@ -109,7 +119,11 @@ const Home = () => {
                                 <span> <FilterTwoTone />
                                     <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
                                 </span>
-                                <ReloadOutlined title="Reset" onClick={() => form.resetFields()} />
+                                <ReloadOutlined title="Reset" onClick={() => {
+                                    form.resetFields();
+                                    setFilter('');
+                                }} 
+                                />
                             </div>
                             <Divider />
                             <Form
@@ -156,7 +170,7 @@ const Home = () => {
                             <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
                                 <Row >
                                     <Tabs
-                                        defaultActiveKey="1"
+                                        defaultActiveKey="sort=-updatedAt"
                                         items={items}
                                         onChange={(value) => { setSortQuery(value) }}
                                         style={{ overflowX: "auto" }}
