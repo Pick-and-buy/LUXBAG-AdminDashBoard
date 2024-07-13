@@ -47,8 +47,8 @@ const Home = () => {
             }
 
             // Filter by Brand Name
-            if (filter.brand) {
-                posts = posts.filter(post => filter.brand.includes(post.product.brand.name));
+            if (filter.brand && filter.brand.length > 0) {
+                posts = posts.filter((post) => filter.brand.includes(post.product.brand.name));
             } 
 
             const start = (current - 1) * pageSize;
@@ -74,6 +74,7 @@ const Home = () => {
 
     const onFinish = (values) => {
         setFilter(values);
+        setCurrent(1); // Reset current page to 1 when applying filter
     }
 
     const handleOnchangePage = (pagination) => {
@@ -149,14 +150,11 @@ const Home = () => {
                                             })}
                                         </Row>
                                     </Checkbox.Group>
-
-
                                 </Form.Item>
                                 <Divider />
                                 <Form.Item
                                     labelCol={{ span: 24 }}
                                 >
-
                                     <div>
                                         <Button onClick={() => form.submit()}
                                             style={{ width: "100%" }} type='primary'>Áp dụng</Button>
@@ -220,12 +218,9 @@ const Home = () => {
                             </div>
                         </Spin>
                     </Col>
-
                 </Row>
             </div>
         </div>
-
-
     )
 }
 

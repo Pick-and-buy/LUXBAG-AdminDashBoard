@@ -107,10 +107,6 @@ const BrandLinesTable = () => {
             align: 'center',
             dataIndex: 'signatureFeatures',
             sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
-            // filters: listBrandLines.map(brandLines => ({
-            //     text: brandLines.signatureFeatures,
-            //     value: brandLines.signatureFeatures,
-            // })),
             filters: getUniqueFilterValues(listBrandLines, ['signatureFeatures']),
             filterMode: 'tree',
             filterSearch: true,

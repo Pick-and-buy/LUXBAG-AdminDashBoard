@@ -19,3 +19,13 @@ export const callFetchAccount = async () => {
     throw error;
   }
 };
+
+export const callFetchListUser = async () => {
+  try {
+    const response = await axiosInstance.get('/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all user:', error);
+    throw error;
+  }
+}
