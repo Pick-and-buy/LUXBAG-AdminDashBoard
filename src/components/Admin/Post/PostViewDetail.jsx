@@ -59,9 +59,9 @@ const PostViewDetail = (props) => {
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Id">{dataViewDetail.id}</Descriptions.Item>
-                    <Descriptions.Item label="Tiêu Đề">{dataViewDetail.title}</Descriptions.Item>
+                    <Descriptions.Item label="Tiêu Đề" span={2} contentStyle={{textAlign: 'center', color: 'blue'}}>{dataViewDetail.title}</Descriptions.Item>
                     <Descriptions.Item label="Tên Sản Phẩm">{dataViewDetail?.product?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Người Đăng Bài">{dataViewDetail?.user?.username}</Descriptions.Item>
                     <Descriptions.Item label="Trạng Thái Hoạt Động">
                         {dataViewDetail?.isAvailable === true ?
                             <Badge status="processing" text="Đang Hoạt Động" />
@@ -69,7 +69,14 @@ const PostViewDetail = (props) => {
                             <Badge status="error" text="Dừng Hoạt Động" />
                         }
                     </Descriptions.Item>
-                    <Descriptions.Item label="Mô Tả" span={2}>{dataViewDetail?.description}</Descriptions.Item>
+                    <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.product?.brand?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail?.product?.brandLine?.lineName}</Descriptions.Item>
+                    <Descriptions.Item label="Thể Loại">{dataViewDetail?.product?.category?.categoryName}</Descriptions.Item>
+                    {dataViewDetail?.description ?
+                        <Descriptions.Item label="Mô Tả" span={2}>{dataViewDetail?.description}</Descriptions.Item>
+                        :
+                        <Descriptions.Item label="Mô Tả" span={2} contentStyle={{ textAlign: 'left', color: 'blue' }}>Không có mô tả...</Descriptions.Item>
+                    }
                     <Descriptions.Item label="Giá Sản Phẩm" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.price}</Descriptions.Item>
                     <Descriptions.Item label="Tình Trạng Sản Phẩm" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.condition}</Descriptions.Item>
                     {dataViewDetail?.product?.size ?

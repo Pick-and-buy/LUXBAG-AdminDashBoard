@@ -33,6 +33,7 @@ const PostTable = () => {
     const fetchPosts = async () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
+        console.log('>>> check res post: ', res);
         if (res && res.result) {
             setListPosts(res.result);
             setTotal(res.result.length);
@@ -51,14 +52,13 @@ const PostTable = () => {
             width: '10%',
             align: 'center',
             dataIndex: 'id',
-            ellipsis: true,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>
-                        {record.id}
+                        {index + 1}
                     </a>
                 )
             }
@@ -68,6 +68,7 @@ const PostTable = () => {
             width: '20%',
             align: 'center',
             dataIndex: 'title',
+            ellipsis: true,
             sorter: (a, b) => a.title.length - b.title.length,
             filters: getUniqueFilterValues(listPosts, ['title',]),
             filterMode: 'tree',
@@ -89,7 +90,6 @@ const PostTable = () => {
             width: '20%',
             align: 'center',
             dataIndex: 'productName',
-            sorter: (a, b) => a?.product?.name.length - b?.product?.name.length,
             filters: getUniqueFilterValues(listPosts, ['product', 'name']),
             filterMode: 'tree',
             filterSearch: true,
@@ -124,7 +124,6 @@ const PostTable = () => {
             width: '10%',
             align: 'center',
             dataIndex: 'brandName',
-            sorter: (a, b) => a?.product?.brand?.name.length - b?.product?.brand?.name.length,
             filters: getUniqueFilterValues(listPosts, ['product', 'brand', 'name']),
             filterMode: 'tree',
             filterSearch: true,

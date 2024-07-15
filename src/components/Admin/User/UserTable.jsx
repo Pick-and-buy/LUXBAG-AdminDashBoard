@@ -12,6 +12,7 @@ import {
 import { COLORS } from "../../../constants/theme";
 import moment from "moment/moment";
 import { callFetchListUser } from "../../../services/user";
+import UserViewDetail from "./UserViewDetail";
 
 const UserTable = () => {
     const [listUser, setListUser] = useState([]);
@@ -22,6 +23,9 @@ const UserTable = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const [dataViewDetail, setDataViewDetail] = useState("");
+    const [openViewDetail, setOpenViewDetail] = useState(false);
+
     useEffect(() => {
         fetchUser();
     }, [current, pageSize]);
@@ -29,6 +33,7 @@ const UserTable = () => {
     const fetchUser = async () => {
         setIsLoading(true);
         const res = await callFetchListUser();
+        console.log('>>> check res user: ', res);
         if (res && res.result) {
             setListUser(res.result);
             setTotal(res.result.length);
@@ -44,6 +49,11 @@ const UserTable = () => {
         moment(item.dob).format('MM')
     ))];
 
+    const getUniqueFilterValues = (listUser, keyPath) => {
+        const values = listUser.map(user => keyPath.reduce((acc, key) => acc?.[key], user)).filter(Boolean);
+        return [...new Set(values)].map(value => ({ text: value, value }));
+    }
+
     const columns = [
         {
             title: 'Id',
@@ -54,10 +64,10 @@ const UserTable = () => {
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
-                        //setDataViewDetail(record);
-                        //setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
                     }}>
-                        {record.id}
+                        {index + 1}
                     </a>
                 )
             }
@@ -66,7 +76,6 @@ const UserTable = () => {
             title: 'Tên Đăng Nhập',
             align: 'center',
             dataIndex: 'username',
-            sorter: (a, b) => a.username.length - b.username.length,
             filters: listUser.map(user => ({
                 text: user.username,
                 value: user.username,
@@ -77,13 +86,29 @@ const UserTable = () => {
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
-                        //setDataViewDetail(record);
-                        //setOpenViewDetail(true);
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
                     }}>
                         {record.username}
                     </a>
                 )
             }
+        },
+        {
+            title: 'Role',
+            align: 'center',
+            dataIndex: 'roleName',
+            filters: getUniqueFilterValues(listUser, ['roles', '0', 'name']),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record?.roles[0]?.name.includes(value),
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.roles[0].name}
+                    </div>
+                )
+            },
         },
         {
             title: 'Email',
@@ -103,18 +128,6 @@ const UserTable = () => {
                 return (
                     <div>
                         {moment(record.dob).format("DD-MM-YYYY")}
-                    </div>
-                )
-            },
-        },
-        {
-            title: 'Role',
-            align: 'center',
-            dataIndex: 'roleName',
-            render: (text, record) => {
-                return (
-                    <div>
-                        {record?.roles[0].name}
                     </div>
                 )
             },
@@ -169,6 +182,11 @@ const UserTable = () => {
                     />
                 </Col>
             </Row>
+            <UserViewDetail
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
+            />
         </>
     )
 }

@@ -59,14 +59,13 @@ const NewsTable = () => {
             width: '10%',
             align: 'center',
             dataIndex: 'id',
-            ellipsis: true,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>
-                        {record.id}
+                        {index + 1}
                     </a>
                 )
             }
@@ -101,7 +100,6 @@ const NewsTable = () => {
             width: '15%',
             align: 'center',
             dataIndex: 'name',
-            sorter: (a, b) => a?.brandLine?.brand?.name.length - b?.brandLine?.brand?.name.length,
             filters: getUniqueFilterValues(listNews, ['brandLine', 'brand', 'name']),
             filterMode: 'tree',
             filterSearch: true,
@@ -119,7 +117,6 @@ const NewsTable = () => {
             width: '15%',
             align: 'center',
             dataIndex: 'lineName',
-            sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
             filters: getUniqueFilterValues(listNews, ['brandLine', 'lineName']),
             filterMode: 'tree',
             filterSearch: true,

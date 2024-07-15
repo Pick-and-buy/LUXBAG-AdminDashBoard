@@ -111,6 +111,7 @@ const BrandLinesModalUpdate = (props) => {
                 okText={"Cập Nhật"}
                 cancelText={"Hủy"}
                 confirmLoading={isSubmit}
+                width={700}
             >
                 <Divider />
                 <Form

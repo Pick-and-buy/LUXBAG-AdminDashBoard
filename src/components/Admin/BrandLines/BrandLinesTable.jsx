@@ -67,14 +67,14 @@ const BrandLinesTable = () => {
             title: 'Id',
             align: 'center',
             dataIndex: 'id',
-            sorter: (a, b) => a.id - b.id,
+            //sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>
-                        {record.id}
+                        {index + 1}
                     </a>
                 )
             }
@@ -103,10 +103,26 @@ const BrandLinesTable = () => {
             }
         },
         {
+            title: 'Thương Hiệu',
+            align: 'center',
+            dataIndex: 'brandName',
+            filters: getUniqueFilterValues(listBrandLines, ['brand', 'name']),
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => record?.brand?.name.includes(value),
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        {record?.brand?.name}
+                    </div>
+                )
+            }
+        },
+        {
             title: 'Signature',
             align: 'center',
             dataIndex: 'signatureFeatures',
-            sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
+            //sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
             filters: getUniqueFilterValues(listBrandLines, ['signatureFeatures']),
             filterMode: 'tree',
             filterSearch: true,

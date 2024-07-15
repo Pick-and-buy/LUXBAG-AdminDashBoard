@@ -25,16 +25,15 @@ const CategoryViewDetail = (props) => {
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Id" span={2}>{dataViewDetail.id}</Descriptions.Item>
-                    <Descriptions.Item label="Trạng Thái Hoạt Động" span={2}>
-                        {dataViewDetail?.brandLine?.availableStatus === true ?
-                        <Badge status="processing" text="Đang Hoạt Động" />
-                        :
-                        <Badge status="error" text="Dừng Hoạt Động" />
-                    }
-                    </Descriptions.Item>
                     <Descriptions.Item label="Thể Loại">{dataViewDetail.categoryName}</Descriptions.Item>
                     <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail?.brandLine?.lineName}</Descriptions.Item>
+                    <Descriptions.Item label="Trạng Thái Hoạt Động" span={2}>
+                        {dataViewDetail?.brandLine?.availableStatus === true ?
+                            <Badge status="processing" text="Đang Hoạt Động" />
+                            :
+                            <Badge status="error" text="Dừng Hoạt Động" />
+                        }
+                    </Descriptions.Item>
                 </Descriptions>
             </Drawer>
         </>

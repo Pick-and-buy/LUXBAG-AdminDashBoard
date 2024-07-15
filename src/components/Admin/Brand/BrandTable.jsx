@@ -52,14 +52,14 @@ const BrandTable = () => {
             width: '25%',
             align: 'center',
             dataIndex: 'id',
-            sorter: (a, b) => a.id - b.id,
+            // sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>
-                        {record.id}
+                        {index + 1}
                     </a>
                 )
             }
@@ -69,7 +69,7 @@ const BrandTable = () => {
             width: '50%',
             align: 'center',
             dataIndex: 'name',
-            sorter: (a, b) => a.name.length - b.name.length,
+            //sorter: (a, b) => a.name.length - b.name.length,
             filters: listBrand.map(brand => ({
                 text: brand.name,
                 value: brand.name,
@@ -77,6 +77,16 @@ const BrandTable = () => {
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => record.name.includes(value),
+            render: (text, record, index) => {
+                return (
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
+                        {record.name}
+                    </a>
+                )
+            }
         },
         {
             title: 'Action',
