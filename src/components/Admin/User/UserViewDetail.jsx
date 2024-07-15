@@ -13,8 +13,8 @@ const UserViewDetail = (props) => {
     const [fileList, setFileList] = useState([]);
 
     useEffect(() => {
-        console.log('>>> check data view detail user: ', dataViewDetail);
-    }, [])
+        // console.log('>>> check data view detail user: ', dataViewDetail.roles[0].name);
+    }, [dataViewDetail])
 
     const onClose = () => {
         setOpenViewDetail(false);

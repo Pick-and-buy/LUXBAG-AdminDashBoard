@@ -48,7 +48,7 @@ const PostTable = () => {
 
     const columns = [
         {
-            title: 'Id',
+            title: 'STT',
             width: '10%',
             align: 'center',
             dataIndex: 'id',

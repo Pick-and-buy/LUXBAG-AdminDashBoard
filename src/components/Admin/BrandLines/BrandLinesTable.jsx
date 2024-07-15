@@ -64,9 +64,8 @@ const BrandLinesTable = () => {
 
     const columns = [
         {
-            title: 'Id',
+            title: 'STT',
             align: 'center',
-            dataIndex: 'id',
             //sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (

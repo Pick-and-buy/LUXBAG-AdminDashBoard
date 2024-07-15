@@ -48,10 +48,9 @@ const BrandTable = () => {
 
     const columns = [
         {
-            title: 'Id',
+            title: 'STT',
             width: '25%',
             align: 'center',
-            dataIndex: 'id',
             // sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (

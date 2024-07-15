@@ -54,11 +54,9 @@ const CategoryTable = () => {
 
     const columns = [
         {
-            title: 'Id',
+            title: 'STT',
             width: '10%',
             align: 'center',
-            dataIndex: 'id',
-            ellipsis: true,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {

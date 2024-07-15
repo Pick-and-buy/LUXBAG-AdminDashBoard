@@ -55,10 +55,9 @@ const NewsTable = () => {
 
     const columns = [
         {
-            title: 'Id',
+            title: 'STT',
             width: '10%',
             align: 'center',
-            dataIndex: 'id',
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
