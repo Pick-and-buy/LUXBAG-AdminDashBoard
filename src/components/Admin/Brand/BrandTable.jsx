@@ -17,10 +17,13 @@ import BrandModalCreate from "./BrandModalCreate";
 import BrandModalUpdate from "./BrandModalUpdate";
 
 const BrandTable = () => {
+    const [originalListBrand, setOriginalListBrand] = useState([]);
     const [listBrand, setListBrand] = useState([]);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
+
+    const [filterOptions, setFilterOptions] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,9 +42,15 @@ const BrandTable = () => {
         setIsLoading(true);
         const res = await callFetchListBrands();
         console.log('>>> check call get all Brand <Brand Table>: ', res);
-        if (res && res.result) {
-            setListBrand(res.result);
-            setTotal(res.result.length);
+        if (res.result && res.result.brands) {
+            setOriginalListBrand(res.result.brands);
+            setListBrand(res.result.brands);
+            setTotal(res.result.brands.length);
+
+            setFilterOptions(res.result.brands.map(brand => ({
+                text: brand.name,
+                value: brand.name,
+            })));
         }
         setIsLoading(false);
     }
@@ -69,13 +78,10 @@ const BrandTable = () => {
             align: 'center',
             dataIndex: 'name',
             //sorter: (a, b) => a.name.length - b.name.length,
-            filters: listBrand.map(brand => ({
-                text: brand.name,
-                value: brand.name,
-            })),
+            filters: filterOptions,
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.name.includes(value),
+            //onFilter: (value, record) => record.name.includes(value),
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
@@ -134,6 +140,18 @@ const BrandTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        let filteredData = [...originalListBrand];
+       
+        Object.keys(filters).forEach(key => {
+            if (filters[key]) {
+                filteredData = filteredData.filter(item => filters[key].includes(item[key]));
+            }
+        });
+
+        setListBrand(filteredData);
+        setTotal(filteredData.length);
+    
         console.log('check params', pagination, filters, sorter, extra);
     }
 
@@ -177,7 +195,8 @@ const BrandTable = () => {
                         title={renderHeader}
                         loading={isLoading}
                         columns={columns}
-                        dataSource={listBrand}
+                        //dataSource={listBrand}
+                        dataSource={listBrand.slice((current - 1) * pageSize, current * pageSize)}
                         onChange={onChange}
                         rowKey="id"
                         pagination={
