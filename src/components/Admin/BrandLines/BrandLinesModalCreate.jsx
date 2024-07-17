@@ -24,7 +24,7 @@ const BrandLinesModalCreate = (props) => {
     const fetchAllBrand = async () => {
         const res = await callFetchListBrands();
         if (res && res?.result) {
-            const brand = res?.result.map(item => {
+            const brand = res?.result.brands.map(item => {
                 return {
                     label: item.name,
                     value: item.name

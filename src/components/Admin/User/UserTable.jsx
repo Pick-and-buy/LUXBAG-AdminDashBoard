@@ -15,6 +15,7 @@ import { callFetchListUser } from "../../../services/user";
 import UserViewDetail from "./UserViewDetail";
 
 const UserTable = () => {
+    const [originalListUser, setOriginalListUser] = useState([]);
     const [listUser, setListUser] = useState([]);
 
     const [current, setCurrent] = useState(1);
@@ -28,13 +29,14 @@ const UserTable = () => {
 
     useEffect(() => {
         fetchUser();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchUser = async () => {
         setIsLoading(true);
         const res = await callFetchListUser();
         console.log('>>> check res user: ', res);
         if (res && res.result) {
+            setOriginalListUser(res.result)
             setListUser(res.result);
             setTotal(res.result.length);
         }
@@ -76,13 +78,13 @@ const UserTable = () => {
             title: 'Tên Đăng Nhập',
             align: 'center',
             dataIndex: 'username',
-            filters: listUser.map(user => ({
+            filters: originalListUser.map(user => ({
                 text: user.username,
                 value: user.username,
             })),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.username.includes(value),
+            //onFilter: (value, record) => record.username.includes(value),
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
@@ -98,10 +100,10 @@ const UserTable = () => {
             title: 'Role',
             align: 'center',
             dataIndex: 'roleName',
-            filters: getUniqueFilterValues(listUser, ['roles', '0', 'name']),
+            filters: getUniqueFilterValues(originalListUser, ['roles', '0', 'name']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record?.roles[0]?.name.includes(value),
+            //onFilter: (value, record) => record?.roles[0]?.name.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -142,6 +144,20 @@ const UserTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        let filteredData = [...originalListUser];
+
+        //Filter by username
+        if(filters.username) {
+            filteredData = filteredData.filter(item => filters.username.includes(item?.username))
+        }
+
+        if(filters.roleName) {
+            filteredData = filteredData.filter(item => filters.roleName.includes(item?.roles[0].name))
+        }
+
+        setListUser(filteredData);
+        setTotal(filteredData.length);
     }
 
     const renderHeader = () => {

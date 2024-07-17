@@ -17,6 +17,7 @@ import CategoryModalCreate from "./CategoryModalCreate";
 import CategoryModalUpdate from "./CategoryModalUpdate";
 
 const CategoryTable = () => {
+    const [originalListCategories, setOriginalListCategories] = useState([]);
     const [listCategories, setListCategories] = useState([]);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
@@ -34,13 +35,14 @@ const CategoryTable = () => {
 
     useEffect(() => {
         fetchCategory();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchCategory = async () => {
         setIsLoading(true);
         const res = await callFetchListCategories();
         console.log('>>> check call get all Categories <Category Table>: ', res);
         if (res && res.result) {
+            setOriginalListCategories(res.result);
             setListCategories(res.result);
             setTotal(res.result.length);
         }
@@ -73,23 +75,23 @@ const CategoryTable = () => {
             align: 'center',
             dataIndex: 'categoryName',
             sorter: (a, b) => a.categoryName.length - b.categoryName.length,
-            filters: listCategories.map(category => ({
+            filters: originalListCategories.map(category => ({
                 text: category.categoryName,
                 value: category.categoryName,
             })),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.categoryName.includes(value),
+            //onFilter: (value, record) => record.categoryName.includes(value),
         },
         {
             title: 'Dòng Thương Hiệu',
             align: 'center',
             dataIndex: 'lineName',
             sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
-            filters: getUniqueFilterValues(listCategories, ['brandLine', 'lineName']),
+            filters: getUniqueFilterValues(originalListCategories, ['brandLine', 'lineName']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record?.brandLine?.lineName.includes(value),
+            //onFilter: (value, record) => record?.brandLine?.lineName.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -146,6 +148,22 @@ const CategoryTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        let filteredData = [...originalListCategories];
+
+        //Filter by category name
+        if(filters.categoryName) {
+            filteredData = filteredData.filter(item => filters.categoryName.includes(item.categoryName))
+        }
+
+        //Filter by brand line name
+        if(filters.lineName) {
+            filteredData = filteredData.filter(item => filters.lineName.includes(item.brandLine.lineName))
+        }
+
+        setListCategories(filteredData);
+        setTotal(filteredData.length);
+
         console.log('check params', pagination, filters, sorter, extra);
     }
 

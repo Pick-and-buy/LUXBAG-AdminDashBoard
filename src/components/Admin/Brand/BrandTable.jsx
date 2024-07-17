@@ -36,7 +36,7 @@ const BrandTable = () => {
 
     useEffect(() => {
         fetchBrand();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchBrand = async () => {
         setIsLoading(true);
@@ -78,9 +78,9 @@ const BrandTable = () => {
             align: 'center',
             dataIndex: 'name',
             //sorter: (a, b) => a.name.length - b.name.length,
-            filters: filterOptions,
-            filterMode: 'tree',
-            filterSearch: true,
+            // filters: filterOptions,
+            // filterMode: 'tree',
+            // filterSearch: true,
             //onFilter: (value, record) => record.name.includes(value),
             render: (text, record, index) => {
                 return (
@@ -195,8 +195,7 @@ const BrandTable = () => {
                         title={renderHeader}
                         loading={isLoading}
                         columns={columns}
-                        //dataSource={listBrand}
-                        dataSource={listBrand.slice((current - 1) * pageSize, current * pageSize)}
+                        dataSource={listBrand}
                         onChange={onChange}
                         rowKey="id"
                         pagination={

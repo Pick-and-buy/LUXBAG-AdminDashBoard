@@ -17,6 +17,7 @@ import NewsModalUpdate from "./NewsModalUpdate";
 
 
 const NewsTable = () => {
+    const [originalListNews, setOriginalListNews] = useState([]);
     const [listNews, setListNews] = useState([]);
 
     const [current, setCurrent] = useState(1);
@@ -35,13 +36,14 @@ const NewsTable = () => {
 
     useEffect(() => {
         fetchNews();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchNews = async () => {
         setIsLoading(true);
         const res = await callFetchListNews();
         console.log('>>> check call get all News <News Table>: ', res);
         if (res && res.result) {
+            setOriginalListNews(res.result);
             setListNews(res.result);
             setTotal(res.result.length);
         }
@@ -76,13 +78,13 @@ const NewsTable = () => {
             dataIndex: 'title',
             ellipsis: true,
             sorter: (a, b) => a.title.length - b.title.length,
-            filters: listNews.map(news => ({
+            filters: originalListNews.map(news => ({
                 text: news.title,
                 value: news.title,
             })),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.title.includes(value),
+            //onFilter: (value, record) => record.title.includes(value),
             render: (text, record) => {
                 return (
                     <a href="#" onClick={() => {
@@ -99,10 +101,10 @@ const NewsTable = () => {
             width: '15%',
             align: 'center',
             dataIndex: 'name',
-            filters: getUniqueFilterValues(listNews, ['brandLine', 'brand', 'name']),
+            filters: getUniqueFilterValues(originalListNews, ['brandLine', 'brand', 'name']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.brandLine?.brand?.name.includes(value),
+            //onFilter: (value, record) => record.brandLine?.brand?.name.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -116,10 +118,10 @@ const NewsTable = () => {
             width: '15%',
             align: 'center',
             dataIndex: 'lineName',
-            filters: getUniqueFilterValues(listNews, ['brandLine', 'lineName']),
+            filters: getUniqueFilterValues(originalListNews, ['brandLine', 'lineName']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.brandLine?.lineName.includes(value),
+            //onFilter: (value, record) => record.brandLine?.lineName.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -182,6 +184,28 @@ const NewsTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        let filteredData = [...originalListNews];
+
+        //Filter by Title
+        if(filters.title) {
+            filteredData = filteredData.filter(item => filters.title.includes(item.title))
+        }
+
+        //Filter by Brand name
+        if(filters.name) {
+            filteredData = filteredData.filter(item => filters.name.includes(item?.brandLine?.brand?.name))
+        }
+
+        //Filter by Brand Line Name
+        if(filters.lineName) {
+            filteredData = filteredData.filter(item => filters.lineName.includes(item?.brandLine?.lineName))
+        }
+
+
+        setListNews(filteredData);
+        setTotal(filteredData.length);
+
         console.log('check params', pagination, filters, sorter, extra);
     }
 

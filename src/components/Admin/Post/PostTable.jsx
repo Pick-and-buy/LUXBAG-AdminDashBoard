@@ -15,6 +15,7 @@ import { callFetchListPosts, callDeletePost } from "../../../services/post";
 import PostViewDetail from "./PostViewDetail";
 
 const PostTable = () => {
+    const [originalListPosts, setOriginalListPosts] = useState([]);
     const [listPosts, setListPosts] = useState([]);
 
     const [current, setCurrent] = useState(1);
@@ -28,13 +29,14 @@ const PostTable = () => {
 
     useEffect(() => {
         fetchPosts();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchPosts = async () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
         console.log('>>> check res post: ', res);
         if (res && res.result) {
+            setOriginalListPosts(res.result);
             setListPosts(res.result);
             setTotal(res.result.length);
         }
@@ -70,10 +72,10 @@ const PostTable = () => {
             dataIndex: 'title',
             ellipsis: true,
             sorter: (a, b) => a.title.length - b.title.length,
-            filters: getUniqueFilterValues(listPosts, ['title',]),
+            filters: getUniqueFilterValues(originalListPosts, ['title']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.title.includes(value),
+            //onFilter: (value, record) => record.title.includes(value),
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
@@ -90,10 +92,10 @@ const PostTable = () => {
             width: '20%',
             align: 'center',
             dataIndex: 'productName',
-            filters: getUniqueFilterValues(listPosts, ['product', 'name']),
+            filters: getUniqueFilterValues(originalListPosts, ['product', 'name']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record?.product?.name.includes(value),
+            //onFilter: (value, record) => record?.product?.name.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -107,10 +109,10 @@ const PostTable = () => {
             width: '10%',
             align: 'center',
             dataIndex: 'username',
-            filters: getUniqueFilterValues(listPosts, ['user', 'username']),
+            filters: getUniqueFilterValues(originalListPosts, ['user', 'username']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record?.user?.username.includes(value),
+            //onFilter: (value, record) => record?.user?.username.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -124,10 +126,10 @@ const PostTable = () => {
             width: '10%',
             align: 'center',
             dataIndex: 'brandName',
-            filters: getUniqueFilterValues(listPosts, ['product', 'brand', 'name']),
+            filters: getUniqueFilterValues(originalListPosts, ['product', 'brand', 'name']),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record?.product?.brand?.name.includes(value),
+            //onFilter: (value, record) => record?.product?.brand?.name.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -199,6 +201,31 @@ const PostTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        let filteredData = [...originalListPosts];
+
+        //Filter by Title
+        if(filters.title) {
+            filteredData = filteredData.filter(item => filters.title.includes(item.title))
+        }
+
+        //Filter by product name
+        if(filters.productName) {
+            filteredData = filteredData.filter(item => filters.productName.includes(item?.product?.name))
+        }
+
+        //Filter by username
+        if(filters.username) {
+            filteredData = filteredData.filter(item => filters.username.includes(item?.user?.username))
+        }
+
+        //Filter By Brand Name
+        if(filters.brandName) {
+            filteredData = filteredData.filter(item => filters.brandName.includes(item?.product?.brand?.name))
+        }
+
+        setListPosts(filteredData);
+        setTotal(filteredData.length);
     }
 
     const renderHeader = () => {
