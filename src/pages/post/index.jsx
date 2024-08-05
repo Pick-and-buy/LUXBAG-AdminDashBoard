@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ViewDetail from "../../components/Post/ViewDetail";
+import { getPostById } from "../../services/post";
 
 const PostPage = () => {
+    const [dataPost, setDataPost] = useState()
+
     let location = useLocation();
 
     let params = new URLSearchParams(location.search);
