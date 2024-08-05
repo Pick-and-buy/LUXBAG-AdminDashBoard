@@ -1,6 +1,7 @@
 import { Row, Col, Rate, Divider } from 'antd';
 import { useRef, useState } from 'react';
 import ImageGallery from 'react-image-gallery';
+import ModalGallery from './ModalGallery';
 import './post.scss';
 
 const ViewDetail = (props) => {
@@ -144,7 +145,15 @@ const ViewDetail = (props) => {
                     </Col>
                 </Row>
             </div>
+            <ModalGallery
+                isOpen={isOpenModalGallery}
+                setIsOpen={setIsOpenModalGallery}
+                currentIndex={currentIndex}
+                items={images}
+                title={"hardcode"}
+            />
         </div>
+        
     )
 }
 
