@@ -58,10 +58,9 @@ const NewsViewDetail = (props) => {
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Id">{dataViewDetail.id}</Descriptions.Item>
-                    <Descriptions.Item label="Tiêu Đề">{dataViewDetail.title}</Descriptions.Item>
+                    <Descriptions.Item label="Tiêu Đề" span={2} contentStyle={{textAlign: 'center', color: 'blue'}}>{dataViewDetail.title}</Descriptions.Item>
                     <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.brandLine?.brand?.name}</Descriptions.Item>
-                    <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail?.brandLine?.lineName}</Descriptions.Item>
+                    <Descriptions.Item label="Dòng Thương Hiệu" >{dataViewDetail?.brandLine?.lineName}</Descriptions.Item>
                     <Descriptions.Item label="Nội Dung" span={2}>{dataViewDetail.content}</Descriptions.Item>
                     {dataViewDetail?.subTitle1 ?
                         <Descriptions.Item label="SubTitle_1" span={2}>{dataViewDetail.subTitle1}</Descriptions.Item>

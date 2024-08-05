@@ -55,22 +55,21 @@ const BrandLinesViewDetail = (props) => {
                 open={openViewDetail}
             >
                 <Descriptions
-                    title="Thông tin thương hiệu"
+                    title="Thông tin dòng thương hiệu"
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Id">{dataViewDetail.id}</Descriptions.Item>
                     <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail.lineName}</Descriptions.Item>
                     <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.brand?.name}</Descriptions.Item>
                     <Descriptions.Item label="Signature">{dataViewDetail.signatureFeatures}</Descriptions.Item>
-                    <Descriptions.Item label="Mô Tả" span={2}>{dataViewDetail.description}</Descriptions.Item>
-                    <Descriptions.Item label="Trạng Thái" span={2}>
+                    <Descriptions.Item label="Trạng Thái">
                         {dataViewDetail.availableStatus === true ?
                             <Badge status="processing" text="Đang Hoạt Động" />
                             :
                             <Badge status="error" text="Dừng Hoạt Động" />
                         }
                     </Descriptions.Item>
+                    <Descriptions.Item label="Mô Tả" span={2}>{dataViewDetail.description}</Descriptions.Item>
                     <Descriptions.Item label="Phạm Vi Giá">{dataViewDetail.priceRange}</Descriptions.Item>
                     <Descriptions.Item label="Ngày Phát Hành">
                         {moment(dataViewDetail.launchDate).format("DD-MM-YYYY")}

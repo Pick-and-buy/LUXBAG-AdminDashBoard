@@ -18,6 +18,7 @@ import moment from "moment/moment";
 import BrandLinesModalUpdate from './BrandLinesModalUpdate';
 
 const BrandLinesTable = () => {
+    const [originalListBrandLines, setOriginalListBrandLines] = useState([]);
     const [listBrandLines, setListBrandLines] = useState([]);
 
     const [current, setCurrent] = useState(1);
@@ -36,13 +37,14 @@ const BrandLinesTable = () => {
 
     useEffect(() => {
         fetchBrandLines();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchBrandLines = async () => {
         setIsLoading(true);
         const res = await callFetchListBrandLines();
         console.log('>>> check call get all Brand-Lines <BrandLines Table>: ', res);
         if (res && res.result) {
+            setOriginalListBrandLines(res.result);
             setListBrandLines(res.result);
             setTotal(res.result.length);
         }
@@ -50,10 +52,10 @@ const BrandLinesTable = () => {
     }
 
     // Get unique years and months
-    const years = [...new Set(listBrandLines.map(item =>
+    const years = [...new Set(originalListBrandLines.map(item =>
         moment(item.launchDate).year()
     ))];
-    const months = [...new Set(listBrandLines.map(item =>
+    const months = [...new Set(originalListBrandLines.map(item =>
         moment(item.launchDate).format('MM')
     ))];
 
@@ -64,17 +66,16 @@ const BrandLinesTable = () => {
 
     const columns = [
         {
-            title: 'Id',
+            title: 'STT',
             align: 'center',
-            dataIndex: 'id',
-            sorter: (a, b) => a.id - b.id,
+            //sorter: (a, b) => a.id - b.id,
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>
-                        {record.id}
+                        {index + 1}
                     </a>
                 )
             }
@@ -84,13 +85,13 @@ const BrandLinesTable = () => {
             align: 'center',
             dataIndex: 'lineName',
             sorter: (a, b) => a.lineName.length - b.lineName.length,
-            filters: listBrandLines.map(brandLines => ({
+            filters: originalListBrandLines.map(brandLines => ({
                 text: brandLines.lineName,
                 value: brandLines.lineName,
             })),
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.lineName.includes(value),
+            //onFilter: (value, record) => record.lineName.includes(value),
             render: (text, record, index) => {
                 return (
                     <a href="#" onClick={() => {
@@ -103,18 +104,30 @@ const BrandLinesTable = () => {
             }
         },
         {
+            title: 'Thương Hiệu',
+            align: 'center',
+            dataIndex: 'brandName',
+            filters: getUniqueFilterValues(originalListBrandLines, ['brand', 'name']),
+            filterMode: 'tree',
+            filterSearch: true,
+            // onFilter: (value, record) => record?.brand?.name.includes(value),
+            render: (text, record, index) => {
+                return (
+                    <div>
+                        {record?.brand?.name}
+                    </div>
+                )
+            }
+        },
+        {
             title: 'Signature',
             align: 'center',
             dataIndex: 'signatureFeatures',
-            sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
-            // filters: listBrandLines.map(brandLines => ({
-            //     text: brandLines.signatureFeatures,
-            //     value: brandLines.signatureFeatures,
-            // })),
-            filters: getUniqueFilterValues(listBrandLines, ['signatureFeatures']),
-            filterMode: 'tree',
-            filterSearch: true,
-            onFilter: (value, record) => record.signatureFeatures.includes(value),
+            //sorter: (a, b) => a.signatureFeatures.length - b.signatureFeatures.length,
+            // filters: getUniqueFilterValues(originalListBrandLines, ['signatureFeatures']),
+            // filterMode: 'tree',
+            // filterSearch: true,
+            //onFilter: (value, record) => record.signatureFeatures.includes(value),
         },
         {
             title: 'Phạm Vi Giá',
@@ -142,18 +155,18 @@ const BrandLinesTable = () => {
                         value: year,
                     })),
                 },
-                {
-                    text: 'Months',
-                    value: 'month',
-                    children: months.map(month => ({
-                        text: month,
-                        value: month,
-                    })),
-                },
+                // {
+                //     text: 'Months',
+                //     value: 'month',
+                //     children: months.map(month => ({
+                //         text: month,
+                //         value: month,
+                //     })),
+                // },
             ],
             filterMode: 'tree',
             filterSearch: true,
-            onFilter: (value, record) => record.launchDate.includes(value),
+            //onFilter: (value, record) => record.launchDate.includes(value),
         },
         {
             title: 'Action',
@@ -203,6 +216,29 @@ const BrandLinesTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        let filteredData = [...originalListBrandLines];
+       
+        //Filter by Brand Line Name
+        if (filters.lineName) {
+            filteredData = filteredData.filter(item => filters.lineName.includes(item.lineName));
+        }
+
+        //Filter by Brand Name
+        if (filters.brandName) {
+            filteredData = filteredData.filter(item => filters.brandName.includes(item?.brand?.name));
+        }
+
+        //Filter lauchDate by Month or year
+        if (filters.launchDate) {
+            filteredData = filteredData.filter(item => {
+                return filters.launchDate.includes(moment(item.launchDate).year());
+            });
+        }
+
+        setListBrandLines(filteredData);
+        setTotal(filteredData.length);
+        
         console.log('check params', pagination, filters, sorter, extra);
     }
 

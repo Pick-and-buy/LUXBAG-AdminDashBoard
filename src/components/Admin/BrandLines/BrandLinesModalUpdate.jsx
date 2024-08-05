@@ -24,7 +24,7 @@ const BrandLinesModalUpdate = (props) => {
     const fetchAllBrand = async () => {
         const res = await callFetchListBrands();
         if (res && res?.result) {
-            const brand = res?.result.map(item => {
+            const brand = res?.result?.brands.map(item => {
                 return {
                     label: item.name,
                     value: item.name
@@ -111,6 +111,7 @@ const BrandLinesModalUpdate = (props) => {
                 okText={"Cập Nhật"}
                 cancelText={"Hủy"}
                 confirmLoading={isSubmit}
+                width={700}
             >
                 <Divider />
                 <Form

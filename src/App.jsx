@@ -5,7 +5,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import Login from './pages/login/index.jsx';
-import ContactPage from './pages/contact/index.jsx';
+import PostPage from './pages/post/index.jsx';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home/index.jsx';
@@ -66,8 +66,8 @@ export default function App() {
       children: [
         { index: true, element: <Home /> },
         {
-          path: "contact",
-          element: <ContactPage />,
+          path: "post/:slug",
+          element: <PostPage />,
         },
       ],
     },
