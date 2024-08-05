@@ -153,7 +153,7 @@ const Home = () => {
         return str;
     }
 
-    const handleRedirectBook = (post) => {
+    const handleRedirectPostDetailPage = (post) => {
         const slug = convertSlug(post.title);
         navigate(`/post/${slug}?id=${post.id}`)
     }
@@ -227,7 +227,7 @@ const Home = () => {
                                         <Row className='customize-row'>
                                             {listPosts?.map((item, index) => {
                                                 return (
-                                                    <div className="column" key={index} onClick={() => handleRedirectBook(item)}>
+                                                    <div className="column" key={index} onClick={() => handleRedirectPostDetailPage(item)}>
                                                         <div className='wrapper'>
                                                             <div className='thumbnail'>
                                                                 <img
