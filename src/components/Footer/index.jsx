@@ -2,11 +2,11 @@ import './footer.scss';
 
 const Footer = () => {
     return (
-        <footer>
+        <div className='footer-container'>
             <div>
                 Giá Tốt ©{new Date().getFullYear()}
             </div>
-        </footer>
+        </div>
     )
 }
 
