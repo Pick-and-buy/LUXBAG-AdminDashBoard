@@ -59,7 +59,7 @@ const PostViewDetail = (props) => {
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Tiêu Đề" span={2} contentStyle={{textAlign: 'center', color: 'blue'}}>{dataViewDetail.title}</Descriptions.Item>
+                    <Descriptions.Item label="Tiêu Đề" span={2} contentStyle={{ textAlign: 'center', color: 'blue' }}>{dataViewDetail.title}</Descriptions.Item>
                     <Descriptions.Item label="Tên Sản Phẩm">{dataViewDetail?.product?.name}</Descriptions.Item>
                     <Descriptions.Item label="Người Đăng Bài">{dataViewDetail?.user?.username}</Descriptions.Item>
                     <Descriptions.Item label="Trạng Thái Hoạt Động">
@@ -70,14 +70,22 @@ const PostViewDetail = (props) => {
                         }
                     </Descriptions.Item>
                     <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.product?.brand?.name}</Descriptions.Item>
-                    <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail?.product?.brandLine?.lineName}</Descriptions.Item>
-                    <Descriptions.Item label="Thể Loại">{dataViewDetail?.product?.category?.categoryName}</Descriptions.Item>
+                    {dataViewDetail?.product?.brandLine?.lineName ?
+                        <Descriptions.Item label="Dòng Thương Hiệu">{dataViewDetail?.product?.brandLine?.lineName}</Descriptions.Item>
+                        :
+                        <Descriptions.Item label="Dòng Thương Hiệu" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
+                    }
+                    {dataViewDetail?.product?.category?.categoryName ?
+                        <Descriptions.Item label="Thể Loại">{dataViewDetail?.product?.category?.categoryName}</Descriptions.Item>
+                        :
+                        <Descriptions.Item label="Thể Loại" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
+                    }
                     {dataViewDetail?.description ?
                         <Descriptions.Item label="Mô Tả" span={2}>{dataViewDetail?.description}</Descriptions.Item>
                         :
                         <Descriptions.Item label="Mô Tả" span={2} contentStyle={{ textAlign: 'left', color: 'blue' }}>Không có mô tả...</Descriptions.Item>
                     }
-                    <Descriptions.Item label="Giá Sản Phẩm" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.price}</Descriptions.Item>
+                    <Descriptions.Item label="Giá Sản Phẩm" contentStyle={{ textAlign: 'center' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dataViewDetail?.product?.price ?? 0)}</Descriptions.Item>
                     <Descriptions.Item label="Tình Trạng Sản Phẩm" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.condition}</Descriptions.Item>
                     {dataViewDetail?.product?.size ?
                         <Descriptions.Item label="Kích Thước" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.size}</Descriptions.Item>
@@ -144,6 +152,7 @@ const PostViewDetail = (props) => {
                         :
                         <Descriptions.Item label="Nơi Mua" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                     }
+                    <Descriptions.Item label="Verify Level" contentStyle={{ textAlign: 'center', color: 'red' }}>{dataViewDetail?.product?.verifiedLevel}</Descriptions.Item>
                 </Descriptions>
                 <Divider orientation="left">Ảnh Sản Phẩm</Divider>
                 <Upload

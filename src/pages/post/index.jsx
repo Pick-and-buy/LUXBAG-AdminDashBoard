@@ -4,7 +4,8 @@ import ViewDetail from "../../components/Post/ViewDetail";
 import { getPostById } from "../../services/post";
 
 const PostPage = () => {
-    const [dataPost, setDataPost] = useState()
+    const [dataPost, setDataPost] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
     let location = useLocation();
 
@@ -12,12 +13,21 @@ const PostPage = () => {
     const id = params?.get("id");  //post id
 
     console.log('>>>> check localtion: ', location);
-    console.log('>>>> check post id: ', id);
 
+    useEffect(() => {
+        fetchPostById(id);
+    }, [id]);
+
+    const fetchPostById = async (id) => {
+        const res = await getPostById(id);
+        if (res && res.result) {
+            setDataPost(res.result);
+        }
+    } 
 
     return (
         <>
-            <ViewDetail />
+            <ViewDetail dataPost={dataPost}/>
         </>
     )
 }
