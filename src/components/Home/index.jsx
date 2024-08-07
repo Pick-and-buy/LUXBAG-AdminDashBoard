@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
 import { Row, Col, Form, Spin, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination } from 'antd';
 import './home.scss';
@@ -19,6 +20,7 @@ const Home = () => {
     const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
 
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     const fetchBrand = async () => {
         const res = await callFetchListBrands();
@@ -151,7 +153,10 @@ const Home = () => {
         return str;
     }
 
-
+    const handleRedirectPostDetailPage = (post) => {
+        const slug = convertSlug(post.title);
+        navigate(`/post/${slug}?id=${post.id}`)
+    }
 
     return (
         <div style={{ background: '#efefef', padding: "20px 0" }}>
@@ -222,7 +227,7 @@ const Home = () => {
                                         <Row className='customize-row'>
                                             {listPosts?.map((item, index) => {
                                                 return (
-                                                    <div className="column" key={index}>
+                                                    <div className="column" key={index} onClick={() => handleRedirectPostDetailPage(item)}>
                                                         <div className='wrapper'>
                                                             <div className='thumbnail'>
                                                                 <img
@@ -263,7 +268,7 @@ const Home = () => {
                                     </div>
                                     :
                                     <div className='not-found-post'>
-                                        <text style={{fontSize: 16, color: 'gray'}}>Không tìm thấy dữ liệu</text>
+                                        Không tìm thấy dữ liệu
                                     </div>
                                 }
                             </div>

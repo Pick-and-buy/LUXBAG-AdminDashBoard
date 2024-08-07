@@ -147,7 +147,7 @@ const PostTable = () => {
             render: (text, record) => {
                 return (
                     <div>
-                        {record?.product?.price}
+                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record?.product?.price ?? 0)}
                     </div>
                 )
             },

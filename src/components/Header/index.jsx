@@ -48,6 +48,9 @@ const Header = () => {
         })
     }
 
+    const handleRedirectHomPage = () => {
+        navigate('/');
+    }
 
     return (
         <>
@@ -58,7 +61,7 @@ const Header = () => {
                             setOpenDrawer(true)
                         }}>OPEN</div>
                         <div className='page-header_logo'>
-                            <span className='logo'>
+                            <span className='logo' onClick={() => handleRedirectHomPage()}>
                                 <FaReact className='rotate icon-react'>ABC DEF</FaReact>
                                 <VscSearchFuzzy className='icon-search' />
                             </span>

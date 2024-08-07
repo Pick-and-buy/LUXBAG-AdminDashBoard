@@ -11,6 +11,16 @@ export const callFetchListPosts = async () => {
     }
 };
 
+export const getPostById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/posts/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching posts data:', error);
+        throw error;
+    }
+};
+
 
 export const getPostsByBrandName = async (query) => {
     try {
