@@ -26,6 +26,8 @@ import { Link } from 'react-router-dom';
 import './layout.scss';
 import { doLogoutAction } from '../../redux/account/accountSlice';
 import { callLogout } from '../../services/auth';
+import { AiFillDollarCircle } from "react-icons/ai";
+import { SiBrandfolder } from "react-icons/si";
 const { Header, Content, Footer, Sider } = Layout;
 
 const items = [
@@ -46,12 +48,12 @@ const items = [
             {
                 label: <Link to='/admin/brands'>Brand</Link>,
                 key: 'brands',
-                icon: <FileTextOutlined />,
+                icon: <SiBrandfolder />,
             },
             {
                 label: <Link to='/admin/brandLines'>Brand Lines</Link>,
                 key: 'brandLines',
-                icon: <ContactsOutlined />,
+                icon: <FileTextOutlined />,
             }
 
         ]
@@ -70,6 +72,11 @@ const items = [
         label: <Link to='/admin/posts'>Manage Posts</Link>,
         key: 'posts',
         icon: <FileProtectOutlined />,
+    },
+    {
+        label: <Link to='/admin/transactions'>Manage Transaction</Link>,
+        key: 'transactions',
+        icon: <AiFillDollarCircle />,
     },
 ];
 

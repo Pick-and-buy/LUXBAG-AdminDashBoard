@@ -1,0 +1,20 @@
+.invoice-dashboard {
+    padding: 20px;
+  
+    .statistics-row {
+      margin-bottom: 20px;
+    }
+  
+    .payment-history {
+      margin-bottom: 20px;
+      
+      .payment-history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        h2 {
+          margin: 0;
+        }
+      }
+    }
+  }
