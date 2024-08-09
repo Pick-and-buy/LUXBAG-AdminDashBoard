@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaReact } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { VscSearchFuzzy } from "react-icons/vsc";
-import { Divider, Badge, Drawer, message, Avatar, Button, Layout, Menu, Dropdown, Space } from 'antd';
+import { Divider, Badge, Drawer, message, Avatar, Button, Layout, Menu, Dropdown, Space, Input } from 'antd';
 import './header.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { DownOutlined } from '@ant-design/icons';
@@ -10,7 +10,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { callLogout } from '../../services/auth';
 import { doLogoutAction } from '../../redux/account/accountSlice';
 
-const Header = () => {
+const { Search } = Input;
+
+const Header = (props) => {
+    const { searchQuery, setSearchQuery } = props;
+
     const [openDrawer, setOpenDrawer] = useState(false);
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
@@ -52,6 +56,12 @@ const Header = () => {
         navigate('/');
     }
 
+    const handleInputChange = (e) => {
+        // let query = e.target.value;
+        // setSearchQuery(query);
+        console.log('>>> check value search query: ', e.target.value);
+    };
+
     return (
         <>
             <div className='header-container'>
@@ -66,8 +76,11 @@ const Header = () => {
                                 <VscSearchFuzzy className='icon-search' />
                             </span>
                             <input
-                                className='input-search' type={'text'}
+                                className='input-search'
+                                type={'text'}
                                 placeholder="Bạn Tìm gì hôm nay"
+                                value={searchQuery}
+                                onChange={handleInputChange}
                             />
                         </div>
                     </div>

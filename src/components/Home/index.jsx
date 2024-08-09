@@ -5,6 +5,7 @@ import { Row, Col, Form, Spin, Checkbox, Divider, InputNumber, Button, Rate, Tab
 import './home.scss';
 import { callFetchListBrands } from '../../services/brand';
 import { callFetchListPosts } from '../../services/post';
+import Header from '../Header';
 
 const Home = () => {
     const [listPosts, setListPosts] = useState([]);
@@ -18,6 +19,7 @@ const Home = () => {
 
     const [filter, setFilter] = useState("");
     const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
+    const [searchQuery, setSearchQuery] = useState('');
 
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -159,124 +161,130 @@ const Home = () => {
     }
 
     return (
-        <div style={{ background: '#efefef', padding: "20px 0" }}>
-            <div className="homepage-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
-                <Row gutter={[20, 20]}>
-                    <Col md={4} sm={0} xs={0}>
-                        <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
-                            <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                                <span> <FilterTwoTone />
-                                    <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
-                                </span>
-                                <ReloadOutlined title="Reset" onClick={() => {
-                                    form.resetFields();
-                                    setFilter('');
-                                }}
-                                />
-                            </div>
-                            <Divider />
-                            <Form
-                                onFinish={onFinish}
-                                form={form}
-                                onValuesChange={(changedValues, values) => handleChangeFilter(changedValues, values)}
-                            >
-                                <Form.Item
-                                    name="brand"
-                                    label="Danh mục sản phẩm"
-                                    labelCol={{ span: 24 }}
-                                >
-                                    <Checkbox.Group>
-                                        <Row>
-                                            {listBrand?.map((item, index) => {
-                                                return (
-                                                    <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
-                                                        <Checkbox value={item.value} >
-                                                            {item.label}
-                                                        </Checkbox>
-                                                    </Col>
-                                                )
-                                            })}
-                                        </Row>
-                                    </Checkbox.Group>
-                                </Form.Item>
-                                <Divider />
-                                <Form.Item
-                                    labelCol={{ span: 24 }}
-                                >
-                                    <div>
-                                        <Button onClick={() => form.submit()}
-                                            style={{ width: "100%" }} type='primary'>Áp dụng</Button>
-                                    </div>
-                                </Form.Item>
-                            </Form>
-                        </div>
-                    </Col>
-                    <Col md={20} xs={24} >
-                        <Spin spinning={isLoading} tip="Loading...">
+        <>
+            <div style={{ background: '#efefef', padding: "20px 0" }}>
+                <div className="homepage-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
+                    <Row gutter={[20, 20]}>
+                        <Col md={4} sm={0} xs={0}>
                             <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
-                                <Row >
-                                    <Tabs
-                                        defaultActiveKey="sort=-updatedAt"
-                                        items={items}
-                                        onChange={(value) => { setSortQuery(value) }}
-                                        style={{ overflowX: "auto" }}
+                                <div style={{ display: 'flex', justifyContent: "space-between" }}>
+                                    <span> <FilterTwoTone />
+                                        <span style={{ fontWeight: 500 }}> Bộ lọc tìm kiếm</span>
+                                    </span>
+                                    <ReloadOutlined title="Reset" onClick={() => {
+                                        form.resetFields();
+                                        setFilter('');
+                                    }}
                                     />
-                                </Row>
-                                {listPosts.length > 0 ?
-                                    <div>
-                                        <Row className='customize-row'>
-                                            {listPosts?.map((item, index) => {
-                                                return (
-                                                    <div className="column" key={index} onClick={() => handleRedirectPostDetailPage(item)}>
-                                                        <div className='wrapper'>
-                                                            <div className='thumbnail'>
-                                                                <img
-                                                                    key={item?.product?.images[0]?.id}
-                                                                    style={{ height: 150, width: 200 }}
-                                                                    src={item?.product?.images[0]?.imageUrl}
-                                                                    alt="thumbnail post" />
-                                                            </div>
-                                                            <div className='text' title={item.title}>{item.title}</div>
-                                                            <div className='price'>
-                                                                Giá tiền: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.product?.price ?? 0)}
-                                                            </div>
-                                                            <div className='rating'>
-                                                                <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </Row>
-                                        <div style={{ marginTop: 30 }}></div>
-                                        <Row style={{ display: "flex", justifyContent: "center" }}>
-                                            <Pagination
-                                                current={current}
-                                                total={total}
-                                                pageSize={pageSize}
-                                                responsive
-                                                onChange={(p, s) => handleOnchangePage({ current: p, pageSize: s })}
-                                                showTotal={(total, range) => {
+                                </div>
+                                <Divider />
+                                <Form
+                                    onFinish={onFinish}
+                                    form={form}
+                                    onValuesChange={(changedValues, values) => handleChangeFilter(changedValues, values)}
+                                >
+                                    <Form.Item
+                                        name="brand"
+                                        label="Danh mục sản phẩm"
+                                        labelCol={{ span: 24 }}
+                                    >
+                                        <Checkbox.Group>
+                                            <Row>
+                                                {listBrand?.map((item, index) => {
                                                     return (
-                                                        <div>
-                                                            {range[0]} - {range[1]} trên {total} rows
+                                                        <Col span={24} key={`index-${index}`} style={{ padding: '7px 0' }}>
+                                                            <Checkbox value={item.value} >
+                                                                {item.label}
+                                                            </Checkbox>
+                                                        </Col>
+                                                    )
+                                                })}
+                                            </Row>
+                                        </Checkbox.Group>
+                                    </Form.Item>
+                                    <Divider />
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                    >
+                                        <div>
+                                            <Button onClick={() => form.submit()}
+                                                style={{ width: "100%" }} type='primary'>Áp dụng</Button>
+                                        </div>
+                                    </Form.Item>
+                                </Form>
+                            </div>
+                        </Col>
+                        <Col md={20} xs={24} >
+                            <Spin spinning={isLoading} tip="Loading...">
+                                <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
+                                    <Row >
+                                        <Tabs
+                                            defaultActiveKey="sort=-updatedAt"
+                                            items={items}
+                                            onChange={(value) => { setSortQuery(value) }}
+                                            style={{ overflowX: "auto" }}
+                                        />
+                                    </Row>
+                                    {listPosts.length > 0 ?
+                                        <div>
+                                            <Row className='customize-row'>
+                                                {listPosts?.map((item, index) => {
+                                                    return (
+                                                        <div className="column" key={index} onClick={() => handleRedirectPostDetailPage(item)}>
+                                                            <div className='wrapper'>
+                                                                <div className='thumbnail'>
+                                                                    <img
+                                                                        key={item?.product?.images[0]?.id}
+                                                                        style={{ height: 150, width: 200 }}
+                                                                        src={item?.product?.images[0]?.imageUrl}
+                                                                        alt="thumbnail post" />
+                                                                </div>
+                                                                <div className='text' title={item.title}>{item.title}</div>
+                                                                <div className='price'>
+                                                                    Giá tiền: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.product?.price ?? 0)}
+                                                                </div>
+                                                                <div className='rating'>
+                                                                    <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     )
-                                                }}
-                                            />
-                                        </Row>
-                                    </div>
-                                    :
-                                    <div className='not-found-post'>
-                                        Không tìm thấy dữ liệu
-                                    </div>
-                                }
-                            </div>
-                        </Spin>
-                    </Col>
-                </Row>
+                                                })}
+                                            </Row>
+                                            <div style={{ marginTop: 30 }}></div>
+                                            <Row style={{ display: "flex", justifyContent: "center" }}>
+                                                <Pagination
+                                                    current={current}
+                                                    total={total}
+                                                    pageSize={pageSize}
+                                                    responsive
+                                                    onChange={(p, s) => handleOnchangePage({ current: p, pageSize: s })}
+                                                    showTotal={(total, range) => {
+                                                        return (
+                                                            <div>
+                                                                {range[0]} - {range[1]} trên {total} rows
+                                                            </div>
+                                                        )
+                                                    }}
+                                                />
+                                            </Row>
+                                        </div>
+                                        :
+                                        <div className='not-found-post'>
+                                            Không tìm thấy dữ liệu
+                                        </div>
+                                    }
+                                </div>
+                            </Spin>
+                        </Col>
+                    </Row>
+                </div>
             </div>
-        </div>
+            <Header
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+            />
+        </>
     )
 }
 
