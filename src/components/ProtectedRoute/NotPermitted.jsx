@@ -7,9 +7,15 @@ const NotPermitted = () => {
     const user = useSelector(state => state.account.user);
     const userRole = user.roles[0].name;
 
+    const handleRedirectLogin = async () => {
+        navigate('/login')
+        //handle logout
+        //dispatch(doLogoutAction());
+    }
+
     return (
         <>
-            {userRole === 'ADMIN' ?
+            {userRole === 'ADMIN' &&
                 <Result
                     status="403"
                     title="403"
@@ -18,13 +24,14 @@ const NotPermitted = () => {
                         <Button type="primary" onClick={() => navigate('/')}>Back Home</Button>
                     }
                 />
-                :
+            }
+            {userRole === 'USER' &&
                 <Result
                     status="403"
                     title="403"
                     subTitle="Sorry, The page you visited does not exist."
                     extra={
-                        <Button type="primary" onClick={() => navigate('/login')}>Return Login</Button>
+                        <Button type="primary" onClick={() => navigate('/')}>Back Home</Button>
                     }
                 />
             }
