@@ -40,11 +40,9 @@ export default function App() {
 
   const isLoading = useSelector(state => state.account.isLoading);
   const isAuthenticated = useSelector(state => state.account.isAuthenticated);
-
   const dispatch = useDispatch();
 
   const getAccount = async () => {
-
     if (window.location.pathname === '/login') return;
 
     const res = await callFetchAccount();
@@ -53,9 +51,15 @@ export default function App() {
     }
   }
 
+  // useEffect(() => {
+  //   getAccount();
+  // }, [])
+
   useEffect(() => {
-    getAccount();
-  }, [])
+    if (!isAuthenticated) {
+      getAccount();
+    }
+  }, [isAuthenticated]);
 
   const router = createBrowserRouter([
 
@@ -82,10 +86,7 @@ export default function App() {
       errorElement: <NotFound />,
       children: [
         {
-          index: true, element:
-            // <ProtectedRoute>
-            <AdminDashboard />
-          // </ProtectedRoute>
+          index: true, element: <AdminDashboard />
         },
         {
           path: "user",
@@ -123,18 +124,22 @@ export default function App() {
       path: "/login",
       element: <Login />,
     },
-
   ]);
+
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
 
   return (
     <>
-      {isLoading === false
+      {/* {isLoading === false
         || window.location.pathname === '/login' || window.location.pathname === '/'
         ?
         <RouterProvider router={router} />
         :
         <Loading />
-      }
+      } */}
+      <RouterProvider router={router} />
     </>
   )
 }
