@@ -18,6 +18,8 @@ const NewsModalUpdate = (props) => {
 
     const [fileList, setFileList] = useState([]);
 
+    const [images, setImages] = useState([]);
+
     //https://ant.design/components/form#formuseform
     const [formHook] = Form.useForm();
 
@@ -57,9 +59,23 @@ const NewsModalUpdate = (props) => {
         }
         const formData = new FormData();
         formData.append('request', JSON.stringify(request));
-        fileList.forEach(file => {
-            formData.append('banner', file.originFileObj);
-        });
+        // fileList.forEach(file => {
+        //     formData.append('banner', file.originFileObj);
+        // });
+
+        // Nếu người dùng cập nhật banner, thêm file mới vào formData
+        if (fileList.length > 0 && fileList[0].originFileObj) {
+            fileList.forEach(file => {
+                formData.append('banner', file.originFileObj);
+            });
+        } else {
+           // Nếu không có file mới, nhưng có ảnh cũ, thêm ảnh cũ dưới dạng Blob hoặc File vào formData
+            const response = await fetch(images.url);
+            const blob = await response.blob();
+            const oldFile = new File([blob], images.name, { type: blob.type });
+            formData.append('banner', oldFile);
+        }
+
         setIsSubmit(true);
         //call API Update News
         const res = await callUpdateNews(query, formData);
@@ -78,6 +94,10 @@ const NewsModalUpdate = (props) => {
     }
 
     useEffect(() => {
+        console.log('>>>> check log file List New: ', fileList[0]);
+    }, [fileList])
+
+    useEffect(() => {
         console.log('>>> check data update: ', dataUpdate);
         if (dataUpdate?.id) {
             const banner = [{
@@ -87,6 +107,7 @@ const NewsModalUpdate = (props) => {
                 url: dataUpdate?.banner
             }]
             setFileList(banner);
+            setImages(banner);
             const initValues = {
                 title: dataUpdate?.title,
                 content: dataUpdate?.content,
@@ -133,6 +154,8 @@ const NewsModalUpdate = (props) => {
     };
 
     const handleChange = ({ fileList: newFileList }) => {
+        console.log('>>> check: ', newFileList);
+
         setFileList(newFileList);
     }
 
