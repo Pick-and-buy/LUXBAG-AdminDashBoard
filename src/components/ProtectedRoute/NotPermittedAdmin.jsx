@@ -9,7 +9,6 @@ const NotPermitted = () => {
     const user = useSelector(state => state.account.user);
     const userRole = user.roles[0].name;
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
-    const isLoading = useSelector(state => state.account.isLoading);
 
     const handleRedirectLogin = async () => {
         navigate('/login')
@@ -27,14 +26,14 @@ const NotPermitted = () => {
                     }
                 />
             }
-
+          
             {!isAuthenticated &&
                 <Result
                     status="403"
                     title="403"
                     subTitle="Sorry, The page you visited does not exist."
                     extra={
-                        <Button type="primary" onClick={handleRedirectLogin}>Back Login</Button>
+                        <Button type="primary" onClick={() => navigate('/')}>Back Login</Button>
                     }
                 />
             }

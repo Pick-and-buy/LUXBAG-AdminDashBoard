@@ -55,6 +55,12 @@ export default function App() {
     getAccount();
   }, [])
 
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     getAccount();
+  //   }
+  // }, [isAuthenticated]);
+
   const router = createBrowserRouter([
 
     //================User====================
