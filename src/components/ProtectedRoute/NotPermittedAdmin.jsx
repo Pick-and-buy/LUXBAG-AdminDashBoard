@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Result } from "antd";
 import Loading from '../Loading';
 
-const NotPermitted = () => {
+const NotPermittedAdmin = () => {
     const navigate = useNavigate();
     const user = useSelector(state => state.account.user);
     const userRole = user.roles[0].name;
@@ -16,29 +16,16 @@ const NotPermitted = () => {
 
     return (
         <>
-            {(userRole === 'ADMIN' || userRole === 'USER') &&
-                <Result
-                    status="403"
-                    title="403"
-                    subTitle="Sorry, The page you visited does not exist."
-                    extra={
-                        <Button type="primary" onClick={() => navigate('/')}>Back Home</Button>
-                    }
-                />
-            }
-          
-            {!isAuthenticated &&
-                <Result
-                    status="403"
-                    title="403"
-                    subTitle="Sorry, The page you visited does not exist."
-                    extra={
-                        <Button type="primary" onClick={() => navigate('/')}>Back Login</Button>
-                    }
-                />
-            }
+            <Result
+                status="403"
+                title="403"
+                subTitle="Sorry, The page you visited does not exist."
+                extra={
+                    <Button type="primary" onClick={handleRedirectLogin}>Back Login</Button>
+                }
+            />
         </>
     )
 }
 
-export default NotPermitted;
+export default NotPermittedAdmin;

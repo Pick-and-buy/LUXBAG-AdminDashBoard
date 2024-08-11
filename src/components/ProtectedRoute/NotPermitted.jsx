@@ -17,7 +17,7 @@ const NotPermitted = () => {
 
     return (
         <>
-            {(userRole === 'ADMIN' || userRole === 'USER') &&
+            {(userRole === 'USER') &&
                 <Result
                     status="403"
                     title="403"

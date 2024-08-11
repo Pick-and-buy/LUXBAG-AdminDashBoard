@@ -5,8 +5,10 @@ import NotPermitted from './NotPermitted';
 import Loading from '../Loading';
 import { doGetAccountAction } from '../../redux/account/accountSlice';
 import { callFetchAccount } from '../../services/user';
+import NotPermittedAdmin from './NotPermittedAdmin';
 
 const RoleBaseRoute = (props) => {
+    const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const isAdminRoute = window.location.pathname.startsWith('/admin');
     const user = useSelector(state => state.account.user);
     const userRole = user.roles[0].name;
@@ -28,16 +30,16 @@ const ProtectedRoute = (props) => {
     const isLoading = useSelector(state => state.account.isLoading);
     const dispatch = useDispatch();
 
-    if(isLoading && userRole === "") {
-        return (<NotPermitted />)
-    } 
-    else if(isLoading) {
-        return <Loading />;
-    }
-
-    // if (isLoading) {
+    // if(isLoading && userRole === "") {
+    //     return (<NotPermitted />)
+    // } 
+    // else if(isLoading) {
     //     return <Loading />;
     // }
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <>
