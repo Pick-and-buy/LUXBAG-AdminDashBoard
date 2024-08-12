@@ -83,29 +83,39 @@ const items = [
 
 
 const LayoutAdmin = () => {
+    // Inside LayoutAdmin component
+    const location = useLocation();
+
+    //Get current path
+    const currentPath = location.pathname;
+
+    // Khởi tạo activeMenu dựa trên đường dẫn hiện tại
+    const initialMenu = () => {
+        const matchingItem = items.find(item => {
+            if (item.children) {
+                return item.children.some(child => child.key === currentPath.split('/').pop());
+            }
+            return currentPath.includes(item.key);
+        });
+        return matchingItem ? matchingItem.key : 'dashboard';
+    };
 
     const [collapsed, setCollapsed] = useState(false);
-    const [activeMenu, setActiveMenu] = useState('dashboard');
+    const [activeMenu, setActiveMenu] = useState(initialMenu());
     const user = useSelector(state => state.account.user);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    // Inside LayoutAdmin component
-    const location = useLocation();
 
     //handle active Menu when change url
     useEffect(() => {
-        //Get current path
-        const currentPath = location.pathname;
-
         //Duyệt qua từng item trong mảng items
         //Khi tìm thấy item thỏa mãn điều kiện trong hàm find, nó sẽ trả về item đó và lưu trữ trong biến matchingItem.
         const matchingItem = items.find(item => {
             if (item.children) {
                 return item.children.some(child => child.key === currentPath.split('/').pop());
             }
-
             //Trả về true nếu item.key là một phần của currentPath.
             return currentPath.includes(item.key);
         });
@@ -115,7 +125,7 @@ const LayoutAdmin = () => {
         }
         console.log('>>> check matchingItem: ', matchingItem);
         
-    }, [location])
+    }, [location, activeMenu])
 
     const handleLogout = async () => {
         const res = await callLogout();
