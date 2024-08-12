@@ -1,4 +1,4 @@
-import React, { Children, useState } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import {
     AppstoreOutlined,
     ExceptionOutlined,
@@ -21,7 +21,7 @@ import { Button, Layout, Menu, Avatar, Dropdown, Space, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from "react-router-dom";
 import { COLORS } from '../../constants/theme';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './layout.scss';
 import { doLogoutAction } from '../../redux/account/accountSlice';
@@ -91,6 +91,32 @@ const LayoutAdmin = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    // Inside LayoutAdmin component
+    const location = useLocation();
+
+    //handle active Menu when change url
+    useEffect(() => {
+        //Get current path
+        const currentPath = location.pathname;
+
+        //Duyệt qua từng item trong mảng items
+        //Khi tìm thấy item thỏa mãn điều kiện trong hàm find, nó sẽ trả về item đó và lưu trữ trong biến matchingItem.
+        const matchingItem = items.find(item => {
+            if (item.children) {
+                return item.children.some(child => child.key === currentPath.split('/').pop());
+            }
+
+            //Trả về true nếu item.key là một phần của currentPath.
+            return currentPath.includes(item.key);
+        });
+
+        if (matchingItem) {
+            setActiveMenu(matchingItem.key);
+        }
+        console.log('>>> check matchingItem: ', matchingItem);
+        
+    }, [location])
+
     const handleLogout = async () => {
         const res = await callLogout();
         console.log('check res logout admin: ', res);
@@ -139,7 +165,7 @@ const LayoutAdmin = () => {
                     Admin
                 </div>
                 <Menu
-                    defaultSelectedKeys={[activeMenu]}
+                    selectedKeys={[activeMenu]}
                     mode="inline"
                     theme="dark"
                     items={items}
