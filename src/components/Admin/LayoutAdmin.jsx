@@ -80,17 +80,15 @@ const items = [
     },
 ];
 
-
-
 const LayoutAdmin = () => {
     // Inside LayoutAdmin component
     const location = useLocation();
 
-    //Get current path
-    const currentPath = location.pathname;
-
     // Khởi tạo activeMenu dựa trên đường dẫn hiện tại
     const initialMenu = () => {
+        //Get current path
+        const currentPath = location.pathname;
+
         const matchingItem = items.find(item => {
             if (item.children) {
                 return item.children.some(child => child.key === currentPath.split('/').pop());
@@ -107,24 +105,22 @@ const LayoutAdmin = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-
-    //handle active Menu when change url
     useEffect(() => {
-        //Duyệt qua từng item trong mảng items
-        //Khi tìm thấy item thỏa mãn điều kiện trong hàm find, nó sẽ trả về item đó và lưu trữ trong biến matchingItem.
-        const matchingItem = items.find(item => {
+        //Get current path
+        const currentPath = location.pathname.split('/').pop();
+        let matchingKey = 'dashboard'; // Giá trị mặc định nếu không tìm thấy
+        items.forEach(item => {
             if (item.children) {
-                return item.children.some(child => child.key === currentPath.split('/').pop());
+                const childMatch = item.children.find(child => child.key === currentPath);
+                if (childMatch) {
+                    matchingKey = childMatch.key; // Nếu tìm thấy mục con phù hợp, gán key của mục con
+                    setActiveMenu(matchingKey)
+                }
+            } else if (item.key === currentPath) {
+                matchingKey = item.key; // Nếu tìm thấy mục cha phù hợp, gán key của mục cha
+                setActiveMenu(matchingKey)
             }
-            //Trả về true nếu item.key là một phần của currentPath.
-            return currentPath.includes(item.key);
         });
-
-        if (matchingItem) {
-            setActiveMenu(matchingItem.key);
-        }
-        console.log('>>> check matchingItem: ', matchingItem);
-        
     }, [location, activeMenu])
 
     const handleLogout = async () => {
