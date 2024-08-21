@@ -81,7 +81,16 @@ const CategoryTable = () => {
             })),
             filterMode: 'tree',
             filterSearch: true,
-            //onFilter: (value, record) => record.categoryName.includes(value),
+            render: (text, record) => {
+                return (
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
+                        {record.categoryName}
+                    </a>
+                )
+            },
         },
         {
             title: 'Dòng Thương Hiệu',
@@ -182,12 +191,12 @@ const CategoryTable = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Category</span>
                 <span style={{ display: 'flex', gap: 10 }}>
-                    <Button
+                    {/* <Button
                         icon={<ExportOutlined />}
                         type="primary"
                         onClick={() => handleExportData()}
                     >Export
-                    </Button>
+                    </Button> */}
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
