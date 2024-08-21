@@ -59,9 +59,10 @@ const PostViewDetail = (props) => {
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Tiêu Đề" span={2} contentStyle={{ textAlign: 'center', color: 'blue' }}>{dataViewDetail.title}</Descriptions.Item>
-                    <Descriptions.Item label="Tên Sản Phẩm">{dataViewDetail?.product?.name}</Descriptions.Item>
-                    <Descriptions.Item label="Người Đăng Bài">{dataViewDetail?.user?.username}</Descriptions.Item>
+                    {/* <Descriptions.Item label="Tiêu Đề" span={2} contentStyle={{ textAlign: 'center', color: 'blue' }}>{dataViewDetail.title}</Descriptions.Item> */}
+                    <Descriptions.Item label="Tên Sản Phẩm" span={2} contentStyle={{ textAlign: 'center', color: 'blue' }}>{dataViewDetail?.product?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Người Đăng Bài">{dataViewDetail?.user?.firstName}</Descriptions.Item>
+                    <Descriptions.Item label="Verify Level" contentStyle={{ textAlign: 'center', color: 'red' }}>{dataViewDetail?.product?.verifiedLevel}</Descriptions.Item>
                     <Descriptions.Item label="Trạng Thái Hoạt Động">
                         {dataViewDetail?.isAvailable === true ?
                             <Badge status="processing" text="Đang Hoạt Động" />
@@ -152,7 +153,6 @@ const PostViewDetail = (props) => {
                         :
                         <Descriptions.Item label="Nơi Mua" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                     }
-                    <Descriptions.Item label="Verify Level" contentStyle={{ textAlign: 'center', color: 'red' }}>{dataViewDetail?.product?.verifiedLevel}</Descriptions.Item>
                 </Descriptions>
                 <Divider orientation="left">Ảnh Sản Phẩm</Divider>
                 <Upload

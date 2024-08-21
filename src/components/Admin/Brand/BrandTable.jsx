@@ -170,12 +170,12 @@ const BrandTable = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brands</span>
                 <span style={{ display: 'flex', gap: 10 }}>
-                    <Button
+                    {/* <Button
                         icon={<ExportOutlined />}
                         type="primary"
                         onClick={() => handleExportData()}
                     >Export
-                    </Button>
+                    </Button> */}
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger

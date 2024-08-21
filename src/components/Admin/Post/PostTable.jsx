@@ -65,28 +65,28 @@ const PostTable = () => {
                 )
             }
         },
-        {
-            title: 'Tiêu Đề Bài Đăng',
-            width: '20%',
-            align: 'center',
-            dataIndex: 'title',
-            ellipsis: true,
-            sorter: (a, b) => a.title.length - b.title.length,
-            filters: getUniqueFilterValues(originalListPosts, ['title']),
-            filterMode: 'tree',
-            filterSearch: true,
-            //onFilter: (value, record) => record.title.includes(value),
-            render: (text, record, index) => {
-                return (
-                    <a href="#" onClick={() => {
-                        setDataViewDetail(record);
-                        setOpenViewDetail(true);
-                    }}>
-                        {record.title}
-                    </a>
-                )
-            }
-        },
+        // {
+        //     title: 'Tiêu Đề Bài Đăng',
+        //     width: '20%',
+        //     align: 'center',
+        //     dataIndex: 'title',
+        //     ellipsis: true,
+        //     sorter: (a, b) => a.title.length - b.title.length,
+        //     filters: getUniqueFilterValues(originalListPosts, ['title']),
+        //     filterMode: 'tree',
+        //     filterSearch: true,
+        //     //onFilter: (value, record) => record.title.includes(value),
+        //     render: (text, record, index) => {
+        //         return (
+        //             <a href="#" onClick={() => {
+        //                 setDataViewDetail(record);
+        //                 setOpenViewDetail(true);
+        //             }}>
+        //                 {record.title}
+        //             </a>
+        //         )
+        //     }
+        // },
         {
             title: 'Tên Sản Phẩm',
             width: '20%',
@@ -98,9 +98,12 @@ const PostTable = () => {
             //onFilter: (value, record) => record?.product?.name.includes(value),
             render: (text, record) => {
                 return (
-                    <div>
+                    <a href="#" onClick={() => {
+                        setDataViewDetail(record);
+                        setOpenViewDetail(true);
+                    }}>
                         {record?.product?.name}
-                    </div>
+                    </a>
                 )
             },
         },
@@ -148,6 +151,19 @@ const PostTable = () => {
                 return (
                     <div>
                         {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record?.product?.price ?? 0)}
+                    </div>
+                )
+            },
+        },
+        {
+            title: 'Status',
+            width: '10%',
+            align: 'center',
+            key: 'status',
+            render: (text, record) => {
+                return (
+                    <div>
+                        ok
                     </div>
                 )
             },
@@ -231,7 +247,7 @@ const PostTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Brand-Lines</span>
+                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Post</span>
             </div>
         )
     }
