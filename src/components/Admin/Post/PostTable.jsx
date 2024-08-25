@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Row, Col, Button } from "antd";
-import { Drawer, Descriptions, Popconfirm, message, notification } from "antd";
+import { Table, Row, Col, Button, Switch, message } from "antd";
 import {
     CloudUploadOutlined,
     DeleteTwoTone,
@@ -11,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
 import moment from "moment/moment";
-import { callFetchListPosts, callDeletePost } from "../../../services/post";
+import { callFetchListPosts, callDeletePost, setStatusArchivePost } from "../../../services/post";
 import PostViewDetail from "./PostViewDetail";
 
 const PostTable = () => {
@@ -26,6 +25,10 @@ const PostTable = () => {
 
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
+
+    const [isActivePost, setIsActivePost] = useState(false);
+    const [switchStates, setSwitchStates] = useState({}); // Trạng thái của các Switch
+
 
     useEffect(() => {
         fetchPosts();
@@ -48,6 +51,14 @@ const PostTable = () => {
         return [...new Set(values)].map(value => ({ text: value, value }));
     }
 
+    const handleToggle = (checked, postId) => {
+        setSwitchStates({
+            ...switchStates,
+            [postId]: checked
+        });
+        console.log(`Switch for post ID ${postId} is now ${checked ? 'Active' : 'Inactive'}`);
+    };
+
     const columns = [
         {
             title: 'STT',
@@ -65,28 +76,6 @@ const PostTable = () => {
                 )
             }
         },
-        // {
-        //     title: 'Tiêu Đề Bài Đăng',
-        //     width: '20%',
-        //     align: 'center',
-        //     dataIndex: 'title',
-        //     ellipsis: true,
-        //     sorter: (a, b) => a.title.length - b.title.length,
-        //     filters: getUniqueFilterValues(originalListPosts, ['title']),
-        //     filterMode: 'tree',
-        //     filterSearch: true,
-        //     //onFilter: (value, record) => record.title.includes(value),
-        //     render: (text, record, index) => {
-        //         return (
-        //             <a href="#" onClick={() => {
-        //                 setDataViewDetail(record);
-        //                 setOpenViewDetail(true);
-        //             }}>
-        //                 {record.title}
-        //             </a>
-        //         )
-        //     }
-        // },
         {
             title: 'Tên Sản Phẩm',
             width: '20%',
@@ -162,9 +151,12 @@ const PostTable = () => {
             key: 'status',
             render: (text, record) => {
                 return (
-                    <div>
-                        ok
-                    </div>
+                    <>
+                        <Switch
+                            checked={switchStates[record.id] || false}
+                            onChange={(checked) => handleToggle(checked, record.id)}
+                        />
+                    </>
                 )
             },
         },
@@ -221,22 +213,22 @@ const PostTable = () => {
         let filteredData = [...originalListPosts];
 
         //Filter by Title
-        if(filters.title) {
+        if (filters.title) {
             filteredData = filteredData.filter(item => filters.title.includes(item.title))
         }
 
         //Filter by product name
-        if(filters.productName) {
+        if (filters.productName) {
             filteredData = filteredData.filter(item => filters.productName.includes(item?.product?.name))
         }
 
         //Filter by username
-        if(filters.username) {
+        if (filters.username) {
             filteredData = filteredData.filter(item => filters.username.includes(item?.user?.username))
         }
 
         //Filter By Brand Name
-        if(filters.brandName) {
+        if (filters.brandName) {
             filteredData = filteredData.filter(item => filters.brandName.includes(item?.product?.brand?.name))
         }
 
@@ -254,7 +246,7 @@ const PostTable = () => {
 
     return (
         <>
-             <Row>
+            <Row>
                 <Col span={24}>
                     <Table
                         title={renderHeader}
@@ -283,7 +275,7 @@ const PostTable = () => {
                     />
                 </Col>
             </Row>
-            <PostViewDetail 
+            <PostViewDetail
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}

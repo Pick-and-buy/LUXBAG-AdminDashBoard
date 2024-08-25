@@ -61,3 +61,13 @@ export const callDeletePost = async (query) => {
         throw error;
     }
 }
+
+export const setStatusArchivePost = async (postId) => {
+    try {
+        const response = await axiosInstance.put(`/posts/archive-post/${postId}`);
+        return response;
+    } catch (error) {
+        console.error('Error Update Post Archive Status:', error);
+        throw error;
+    }
+}

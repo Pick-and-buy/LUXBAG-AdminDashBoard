@@ -113,7 +113,7 @@ const PostViewDetail = (props) => {
                         :
                         <Descriptions.Item label="Chiều Dài" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                     }
-                    {dataViewDetail?.product?.referenceCode.toLowerCase() === "none" || dataViewDetail?.product?.referenceCode === "" ?
+                    {dataViewDetail?.product?.referenceCode === "none" || dataViewDetail?.product?.referenceCode === "" || dataViewDetail?.product?.referenceCode === "null" ?
                         <Descriptions.Item label="Mã Tham Chiếu" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                         :
                         <Descriptions.Item label="Mã Tham Chiếu" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.referenceCode}</Descriptions.Item>
@@ -123,27 +123,27 @@ const PostViewDetail = (props) => {
                         :
                         <Descriptions.Item label="Năm Sản Xuất" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                     }
-                    {dataViewDetail?.product?.exteriorMaterial.toLowerCase() === "none" || dataViewDetail?.product?.exteriorMaterial === "" ?
+                    {dataViewDetail?.product?.exteriorMaterial === "none" || dataViewDetail?.product?.exteriorMaterial === "" || dataViewDetail?.product?.exteriorMaterial === "null" ?
                         <Descriptions.Item label="Chất Liệu Bên Ngoài" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                         :
                         <Descriptions.Item label="Chất Liệu Bên Ngoài" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.exteriorMaterial}</Descriptions.Item>
                     }
-                    {dataViewDetail?.product?.accessories.toLowerCase() === "none" || dataViewDetail?.product?.accessories === "" ?
+                    {dataViewDetail?.product?.accessories === "none" || dataViewDetail?.product?.accessories === "" || dataViewDetail?.product?.accessories === "null" ?
                         <Descriptions.Item label="Phụ Kiện" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                         :
                         <Descriptions.Item label="Phụ Kiện" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.accessories}</Descriptions.Item>
                     }
-                    {dataViewDetail?.product?.interiorMaterial.toLowerCase() === "none" || dataViewDetail?.product?.interiorMaterial === "" ?
+                    {dataViewDetail?.product?.interiorMaterial === "none" || dataViewDetail?.product?.interiorMaterial === "" || dataViewDetail?.product?.interiorMaterial === "null" ?
                         <Descriptions.Item label="Chất Liệu Bên Trong" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                         :
                         <Descriptions.Item label="Chất Liệu Bên Trong" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.interiorMaterial}</Descriptions.Item>
                     }
-                    {dataViewDetail?.product?.dateCode.toLowerCase() === "none" || dataViewDetail?.product?.dateCode === "" ?
+                    {dataViewDetail?.product?.dateCode === "none" || dataViewDetail?.product?.dateCode === "" || dataViewDetail?.product?.dateCode === "null" ?
                         <Descriptions.Item label="Date Code" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                         :
                         <Descriptions.Item label="Date Code" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.dateCode}</Descriptions.Item>
                     }
-                    {dataViewDetail?.product?.serialNumber.toLowerCase() === "none" || dataViewDetail?.product?.serialNumber === "" ?
+                    {dataViewDetail?.product?.serialNumber === "none" || dataViewDetail?.product?.serialNumber === "" || dataViewDetail?.product?.serialNumber === "null" ?
                         <Descriptions.Item label="Serial Number" contentStyle={{ textAlign: 'center', color: 'blue' }}>N/A</Descriptions.Item>
                         :
                         <Descriptions.Item label="Serial Number" contentStyle={{ textAlign: 'center' }}>{dataViewDetail?.product?.serialNumber}</Descriptions.Item>
