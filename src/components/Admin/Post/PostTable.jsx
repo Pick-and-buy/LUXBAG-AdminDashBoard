@@ -42,10 +42,15 @@ const PostTable = () => {
             setListPosts(res.result);
             setTotal(res.result.length);
 
-            // Khởi tạo trạng thái của Switch cho từng bài post
+            // Khởi tạo trạng thái của Switch cho từng bài post (cập nhật ngược vì back-end lưu ngược so với front-end)
             const initialSwitchStates = {};
             res.result.forEach(post => {
-                initialSwitchStates[post.id] = post.isArchived;
+                if(post.isArchived === true) {
+                    initialSwitchStates[post.id] = false;
+                } else {
+                    initialSwitchStates[post.id] = true;
+                }
+                // initialSwitchStates[post.id] = post.isArchived;
             });
             setSwitchStates(initialSwitchStates);
 
@@ -61,11 +66,11 @@ const PostTable = () => {
     const handleToggle = async (checked, postId) => {
         Modal.confirm({
             title: 'Thông báo',
-            content: `${!checked ? 'Bạn có muốn mở trạng thái hoạt động hay không?' : 'Bạn có muốn tắt trạng thái hoạt động hay không?'}`,
+            content: `${checked ? 'Bạn có muốn mở trạng thái hoạt động hay không?' : 'Bạn có muốn tắt trạng thái hoạt động hay không?'}`,
             onOk: async () => {
                 try {
                     
-                    await setStatusArchivePost(postId, checked);
+                    await setStatusArchivePost(postId, !checked);
 
                     setSwitchStates({
                         ...switchStates,
