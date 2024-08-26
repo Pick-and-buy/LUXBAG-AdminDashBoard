@@ -173,7 +173,7 @@ const PostTable = () => {
             },
         },
         {
-            title: 'Status',
+            title: 'Trạng Thái Hoạt Động',
             width: '10%',
             align: 'center',
             key: 'status',

@@ -65,9 +65,9 @@ const PostViewDetail = (props) => {
                     <Descriptions.Item label="Verify Level" contentStyle={{ textAlign: 'center', color: 'red' }}>{dataViewDetail?.product?.verifiedLevel}</Descriptions.Item>
                     <Descriptions.Item label="Trạng Thái Hoạt Động">
                         {dataViewDetail?.isAvailable === true ?
-                            <Badge status="processing" text="Đang Hoạt Động" />
+                            <Badge status="processing" text={<span style={{ color: 'blue' }}>Đang Hoạt Động</span>} />
                             :
-                            <Badge status="error" text="Dừng Hoạt Động" />
+                            <Badge status="error" text={<span style={{ color: 'red' }}>Dừng Hoạt Động</span>}/>
                         }
                     </Descriptions.Item>
                     <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.product?.brand?.name}</Descriptions.Item>
