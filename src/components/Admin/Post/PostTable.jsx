@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Row, Col, Button, Switch, message } from "antd";
+import { Table, Row, Col, Button, Switch, message, Modal } from "antd";
 import {
     CloudUploadOutlined,
     DeleteTwoTone,
@@ -26,13 +26,12 @@ const PostTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
 
-    const [isActivePost, setIsActivePost] = useState(false);
     const [switchStates, setSwitchStates] = useState({}); // Trạng thái của các Switch
 
 
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [current, pageSize]);
 
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -42,6 +41,14 @@ const PostTable = () => {
             setOriginalListPosts(res.result);
             setListPosts(res.result);
             setTotal(res.result.length);
+
+            // Khởi tạo trạng thái của Switch cho từng bài post
+            const initialSwitchStates = {};
+            res.result.forEach(post => {
+                initialSwitchStates[post.id] = post.isArchived;
+            });
+            setSwitchStates(initialSwitchStates);
+
         }
         setIsLoading(false);
     }
@@ -51,12 +58,28 @@ const PostTable = () => {
         return [...new Set(values)].map(value => ({ text: value, value }));
     }
 
-    const handleToggle = (checked, postId) => {
-        setSwitchStates({
-            ...switchStates,
-            [postId]: checked
+    const handleToggle = async (checked, postId) => {
+        Modal.confirm({
+            title: 'Thông báo',
+            content: `${!checked ? 'Bạn có muốn mở trạng thái hoạt động hay không?' : 'Bạn có muốn tắt trạng thái hoạt động hay không?'}`,
+            onOk: async () => {
+                try {
+                    
+                    await setStatusArchivePost(postId, checked);
+
+                    setSwitchStates({
+                        ...switchStates,
+                        [postId]: checked       // Cập nhật trạng thái hiển thị của Switch
+                    });
+                    message.success(`Cập nhật trạng thái hoạt động của bài Post thành công!`);
+                } catch (error) {
+                    message.error('Cập nhật trạng thái thất bại!');
+                }
+            },
+            onCancel() {
+                // Do nothing if canceled
+            }
         });
-        console.log(`Switch for post ID ${postId} is now ${checked ? 'Active' : 'Inactive'}`);
     };
 
     const columns = [
@@ -153,7 +176,7 @@ const PostTable = () => {
                 return (
                     <>
                         <Switch
-                            checked={switchStates[record.id] || false}
+                            checked={switchStates[record.id]}
                             onChange={(checked) => handleToggle(checked, record.id)}
                         />
                     </>
