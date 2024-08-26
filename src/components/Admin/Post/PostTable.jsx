@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Row, Col, Button } from "antd";
-import { Drawer, Descriptions, Popconfirm, message, notification } from "antd";
+import { Table, Row, Col, Button, Switch, message, Modal } from "antd";
 import {
     CloudUploadOutlined,
     DeleteTwoTone,
@@ -11,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
 import moment from "moment/moment";
-import { callFetchListPosts, callDeletePost } from "../../../services/post";
+import { callFetchListPosts, callDeletePost, setStatusArchivePost } from "../../../services/post";
 import PostViewDetail from "./PostViewDetail";
 
 const PostTable = () => {
@@ -27,9 +26,12 @@ const PostTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState("");
     const [openViewDetail, setOpenViewDetail] = useState(false);
 
+    const [switchStates, setSwitchStates] = useState({}); // Trạng thái của các Switch
+
+
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [current, pageSize]);
 
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -39,6 +41,19 @@ const PostTable = () => {
             setOriginalListPosts(res.result);
             setListPosts(res.result);
             setTotal(res.result.length);
+
+            // Khởi tạo trạng thái của Switch cho từng bài post (cập nhật ngược vì back-end lưu ngược so với front-end)
+            const initialSwitchStates = {};
+            res.result.forEach(post => {
+                if(post.isArchived === true) {
+                    initialSwitchStates[post.id] = false;
+                } else {
+                    initialSwitchStates[post.id] = true;
+                }
+                // initialSwitchStates[post.id] = post.isArchived;
+            });
+            setSwitchStates(initialSwitchStates);
+
         }
         setIsLoading(false);
     }
@@ -47,6 +62,30 @@ const PostTable = () => {
         const values = posts.map(post => keyPath.reduce((acc, key) => acc?.[key], post)).filter(Boolean);
         return [...new Set(values)].map(value => ({ text: value, value }));
     }
+
+    const handleToggle = async (checked, postId) => {
+        Modal.confirm({
+            title: 'Thông báo',
+            content: `${checked ? 'Bạn có muốn mở trạng thái hoạt động hay không?' : 'Bạn có muốn tắt trạng thái hoạt động hay không?'}`,
+            onOk: async () => {
+                try {
+                    
+                    await setStatusArchivePost(postId, !checked);
+
+                    setSwitchStates({
+                        ...switchStates,
+                        [postId]: checked       // Cập nhật trạng thái hiển thị của Switch
+                    });
+                    message.success(`Cập nhật trạng thái hoạt động của bài Post thành công!`);
+                } catch (error) {
+                    message.error('Cập nhật trạng thái thất bại!');
+                }
+            },
+            onCancel() {
+                // Do nothing if canceled
+            }
+        });
+    };
 
     const columns = [
         {
@@ -65,28 +104,6 @@ const PostTable = () => {
                 )
             }
         },
-        // {
-        //     title: 'Tiêu Đề Bài Đăng',
-        //     width: '20%',
-        //     align: 'center',
-        //     dataIndex: 'title',
-        //     ellipsis: true,
-        //     sorter: (a, b) => a.title.length - b.title.length,
-        //     filters: getUniqueFilterValues(originalListPosts, ['title']),
-        //     filterMode: 'tree',
-        //     filterSearch: true,
-        //     //onFilter: (value, record) => record.title.includes(value),
-        //     render: (text, record, index) => {
-        //         return (
-        //             <a href="#" onClick={() => {
-        //                 setDataViewDetail(record);
-        //                 setOpenViewDetail(true);
-        //             }}>
-        //                 {record.title}
-        //             </a>
-        //         )
-        //     }
-        // },
         {
             title: 'Tên Sản Phẩm',
             width: '20%',
@@ -156,15 +173,18 @@ const PostTable = () => {
             },
         },
         {
-            title: 'Status',
+            title: 'Trạng Thái Hoạt Động',
             width: '10%',
             align: 'center',
             key: 'status',
             render: (text, record) => {
                 return (
-                    <div>
-                        ok
-                    </div>
+                    <>
+                        <Switch
+                            checked={switchStates[record.id]}
+                            onChange={(checked) => handleToggle(checked, record.id)}
+                        />
+                    </>
                 )
             },
         },
@@ -221,22 +241,22 @@ const PostTable = () => {
         let filteredData = [...originalListPosts];
 
         //Filter by Title
-        if(filters.title) {
+        if (filters.title) {
             filteredData = filteredData.filter(item => filters.title.includes(item.title))
         }
 
         //Filter by product name
-        if(filters.productName) {
+        if (filters.productName) {
             filteredData = filteredData.filter(item => filters.productName.includes(item?.product?.name))
         }
 
         //Filter by username
-        if(filters.username) {
+        if (filters.username) {
             filteredData = filteredData.filter(item => filters.username.includes(item?.user?.username))
         }
 
         //Filter By Brand Name
-        if(filters.brandName) {
+        if (filters.brandName) {
             filteredData = filteredData.filter(item => filters.brandName.includes(item?.product?.brand?.name))
         }
 
@@ -254,7 +274,7 @@ const PostTable = () => {
 
     return (
         <>
-             <Row>
+            <Row>
                 <Col span={24}>
                     <Table
                         title={renderHeader}
@@ -283,7 +303,7 @@ const PostTable = () => {
                     />
                 </Col>
             </Row>
-            <PostViewDetail 
+            <PostViewDetail
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}

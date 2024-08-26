@@ -30,12 +30,12 @@ const Header = (props) => {
     }
 
     let items = [
-        {
-            label: <label
-                style={{ cursor: 'pointer' }}
-            >Quản Lý Tài Khoản</label>,
-            key: 'account',
-        },
+        // {
+        //     label: <label
+        //         style={{ cursor: 'pointer' }}
+        //     >Quản Lý Tài Khoản</label>,
+        //     key: 'account',
+        // },
         {
             label: <label
                 style={{ cursor: 'pointer' }}

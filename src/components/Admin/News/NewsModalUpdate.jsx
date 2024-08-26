@@ -58,12 +58,12 @@ const NewsModalUpdate = (props) => {
             subContent10: values.subContent10,
         }
         const formData = new FormData();
-        formData.append('request', JSON.stringify(request));
+        // formData.append('request', JSON.stringify(request));
         // fileList.forEach(file => {
         //     formData.append('banner', file.originFileObj);
         // });
 
-        // Nếu người dùng cập nhật banner, thêm file mới vào formData
+        //Nếu người dùng cập nhật banner, thêm file mới vào formData
         if (fileList.length > 0 && fileList[0].originFileObj) {
             fileList.forEach(file => {
                 formData.append('banner', file.originFileObj);

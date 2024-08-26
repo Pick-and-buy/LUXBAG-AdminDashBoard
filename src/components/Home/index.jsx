@@ -280,10 +280,10 @@ const Home = () => {
                     </Row>
                 </div>
             </div>
-            <Header
+            {/* <Header
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-            />
+            /> */}
         </>
     )
 }
