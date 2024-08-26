@@ -1,0 +1,40 @@
+.statistics-container {
+    padding: 20px;
+    background-color: #f0f2f5;
+    border-radius: 8px;
+
+    .ant-card {
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+        .ant-statistic-title {
+            font-size: 16px;
+            color: #595959;
+        }
+
+        .ant-statistic-content {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    }
+}
+
+.chart-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+
+    svg {
+        width: 200px;
+        height: 200px;
+    }
+
+    .chart-label {
+        font-size: 10px;
+        font-weight: bold;
+        fill: #000;
+        text-anchor: middle; // Đảm bảo nhãn được căn giữa
+        dominant-baseline: middle; // Căn giữa theo trục dọc
+    }
+}
