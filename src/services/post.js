@@ -52,16 +52,6 @@ export const getPostsByUser = async (query) => {
     }
 }
 
-export const callDeletePost = async (query) => {
-    try {
-        const response = await axiosInstance.delete(`/posts?${query}`);
-        return response;
-    } catch (error) {
-        console.error('Error Delete Post:', error);
-        throw error;
-    }
-}
-
 export const setStatusArchivePost = async (postId, setStatus) => {
     try {
         const response = await axiosInstance.put(`/posts/archive-post/${postId}?isArchive=${setStatus}`, { setStatus });
