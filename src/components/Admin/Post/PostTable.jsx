@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
 import moment from "moment/moment";
-import { callFetchListPosts, callDeletePost, setStatusArchivePost } from "../../../services/post";
+import { callFetchListPosts, setStatusArchivePost } from "../../../services/post";
 import PostViewDetail from "./PostViewDetail";
 
 const PostTable = () => {
@@ -31,7 +31,7 @@ const PostTable = () => {
 
     useEffect(() => {
         fetchPosts();
-    }, [current, pageSize]);
+    }, []);
 
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -45,7 +45,7 @@ const PostTable = () => {
             // Khởi tạo trạng thái của Switch cho từng bài post (cập nhật ngược vì back-end lưu ngược so với front-end)
             const initialSwitchStates = {};
             res.result.forEach(post => {
-                if(post.isArchived === true) {
+                if (post.isArchived === true) {
                     initialSwitchStates[post.id] = false;
                 } else {
                     initialSwitchStates[post.id] = true;
@@ -69,7 +69,7 @@ const PostTable = () => {
             content: `${checked ? 'Bạn có muốn mở trạng thái hoạt động hay không?' : 'Bạn có muốn tắt trạng thái hoạt động hay không?'}`,
             onOk: async () => {
                 try {
-                    
+
                     await setStatusArchivePost(postId, !checked);
 
                     setSwitchStates({
@@ -173,6 +173,33 @@ const PostTable = () => {
             },
         },
         {
+            title: 'Mức độ xác minh',
+            width: '10%',
+            align: 'center',
+            dataIndex: 'verifiedLevel',
+            filters: getUniqueFilterValues(originalListPosts, ['product', 'verifiedLevel']),
+            filterMode: 'tree',
+            filterSearch: true,
+            render: (text, record) => {
+                return (
+                    <>
+                        {record?.product?.verifiedLevel === "LEVEL_2" &&
+                            <div style={{ color: 'red' }}>
+                                Xác minh cấp 2
+                            </div>
+                        }
+
+                        {record?.product?.verifiedLevel === "LEVEL_1" &&
+                            <div style={{ color: 'blue' }}>
+                                Xác minh cấp 1
+                            </div>
+                        }
+                    </>
+
+                )
+            },
+        },
+        {
             title: 'Trạng Thái Hoạt Động',
             width: '10%',
             align: 'center',
@@ -188,46 +215,7 @@ const PostTable = () => {
                 )
             },
         },
-        // {
-        //     title: 'Action',
-        //     width: '10%',
-        //     align: 'center',
-        //     render: (text, record, index) => {
-        //         return (
-        //             <>
-        //                 <Popconfirm
-        //                     placement="leftTop"
-        //                     title={"Xác nhận xóa thương hiệu"}
-        //                     description={"Bạn có chắc chắn muốn xóa bài đăng này?"}
-        //                     onConfirm={() => handleDeletePost(record.id)}
-        //                     onText="Xác nhận"
-        //                     cancelText="Hủy"
-        //                 >
-        //                     <DeleteTwoTone
-        //                         twoToneColor={COLORS.primary}
-        //                     />
-        //                 </Popconfirm>
-        //                 <EditTwoTone
-        //                     twoToneColor={COLORS.primary}
-        //                     style={{ cursor: "pointer", paddingLeft: 20 }}
-        //                     onClick={() => {
-        //                         //setOpenModalUpdate(true);
-        //                         //setDataUpdate(record);
-        //                     }}
-        //                 />
-        //             </>
-        //         )
-        //     }
-        // },
     ];
-
-    const handleDeletePost = async (postId) => {
-        let query = `postId=${postId}`;
-        const res = await callDeletePost(query);
-        console.log('>>> check res DELETE Post: ', res);
-        message.success('Xóa dòng bài đăng thành công');
-        fetchBrandLines();
-    }
 
     const onChange = (pagination, filters, sorter, extra) => {
         if (pagination && pagination.current !== current) {
@@ -260,8 +248,16 @@ const PostTable = () => {
             filteredData = filteredData.filter(item => filters.brandName.includes(item?.product?.brand?.name))
         }
 
+        //Filter By Verify Level
+        if (filters.verifiedLevel) {
+            filteredData = filteredData.filter(item => filters.verifiedLevel.includes(item?.product?.verifiedLevel))
+        }
+
         setListPosts(filteredData);
         setTotal(filteredData.length);
+
+        console.log('>>> check onchange:', filters);
+        
     }
 
     const renderHeader = () => {

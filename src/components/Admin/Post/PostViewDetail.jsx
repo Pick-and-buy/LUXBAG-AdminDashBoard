@@ -12,9 +12,18 @@ const PostViewDetail = (props) => {
 
     const [fileList, setFileList] = useState([]);
 
+    const [invoiceFileList, setInvoiceFileList] = useState([]);
+
+    const [videoFileList, setVideoFileList] = useState([]);
+    const [previewOpenVideo, setPreviewOpenVideo] = useState(false);
+    const [previewImageVideo, setPreviewImageVideo] = useState('');
+    const [previewTitleVideo, setPreviewTitleVideo] = useState('');
+
+
     useEffect(() => {
         console.log('>>> check data view detail <PostViewDetail>: ', dataViewDetail);
         if (dataViewDetail) {
+            //Image
             let productImage = [];
             if (dataViewDetail?.product?.images && dataViewDetail?.product?.images.length > 0) {
                 dataViewDetail?.product?.images.map(item => {
@@ -27,6 +36,31 @@ const PostViewDetail = (props) => {
                 })
             }
             setFileList(productImage);
+
+            //Invoice
+            let productInvoice = [];
+            if (dataViewDetail?.product?.originalReceiptProof) {
+                productInvoice.push({
+                    uid: dataViewDetail.id,
+                    name: dataViewDetail?.product?.name,
+                    status: 'done',
+                    url: dataViewDetail?.product?.originalReceiptProof,
+                })
+            }
+            setInvoiceFileList(productInvoice)
+
+            //Video
+            let productVideo = [];
+            if (dataViewDetail?.product?.productVideo) {
+                productVideo.push({
+                    uid: dataViewDetail.id,
+                    name: dataViewDetail?.product?.name,
+                    status: 'done',
+                    url: dataViewDetail?.product?.productVideo,
+                })
+            }
+            setVideoFileList(productVideo)
+
         }
     }, [dataViewDetail])
 
@@ -34,16 +68,32 @@ const PostViewDetail = (props) => {
         setOpenViewDetail(false);
     };
 
+    //Cancel Ảnh + Hóa đơn
     const handleCancel = () => {
         setPreviewOpen(false)
     };
 
+    //Hiển thị Ảnh + Hóa đơn
     const handlePreview = async (file) => {
         if (file.url) {
             setPreviewImage(file.url || (file.preview));
             setPreviewOpen(true);
             setPreviewTitle(dataViewDetail?.product?.name)
             return;
+        }
+    };
+
+    //Cancel Video
+    const handleCancelVideo = () => {
+        setPreviewOpenVideo(false)
+    };
+
+    //Hiển thị Video
+    const handlePreviewVideo = async (file) => {
+        if (file.url) {
+            setPreviewImageVideo(file.url || (file.preview));
+            setPreviewOpenVideo(true);
+            setPreviewTitleVideo(dataViewDetail?.product?.name)
         }
     };
 
@@ -67,7 +117,7 @@ const PostViewDetail = (props) => {
                         {dataViewDetail?.isAvailable === true ?
                             <Badge status="processing" text={<span style={{ color: 'blue' }}>Đang Hoạt Động</span>} />
                             :
-                            <Badge status="error" text={<span style={{ color: 'red' }}>Dừng Hoạt Động</span>}/>
+                            <Badge status="error" text={<span style={{ color: 'red' }}>Dừng Hoạt Động</span>} />
                         }
                     </Descriptions.Item>
                     <Descriptions.Item label="Thương Hiệu">{dataViewDetail?.product?.brand?.name}</Descriptions.Item>
@@ -165,6 +215,37 @@ const PostViewDetail = (props) => {
                     }
                 >
                 </Upload>
+                {dataViewDetail?.product?.originalReceiptProof &&
+                    <>
+                        <Divider orientation="left">Ảnh Hóa đơn</Divider>
+                        <Upload
+                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                            listType="picture-card"
+                            fileList={invoiceFileList}
+                            onPreview={handlePreview}
+                            showUploadList={
+                                { showRemoveIcon: false }
+                            }
+                        >
+                        </Upload>
+                    </>
+                }
+                {dataViewDetail?.product?.productVideo &&
+                    <>
+                        <Divider orientation="left">Video Sản Phẩm</Divider>
+                        <Upload
+                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                            listType="picture-card"
+                            fileList={videoFileList}
+                            onPreview={handlePreviewVideo}
+                            accept="video/*"  // Restrict to video files only
+                            showUploadList={
+                                { showRemoveIcon: false }
+                            }
+                        >
+                        </Upload>
+                    </>
+                }
                 <Modal
                     open={previewOpen}
                     title={previewTitle}
@@ -172,6 +253,18 @@ const PostViewDetail = (props) => {
                     onCancel={handleCancel}
                 >
                     <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
+
+                <Modal
+                    open={previewOpenVideo}
+                    title={previewTitleVideo}
+                    footer={null}
+                    onCancel={handleCancelVideo}
+                >
+                    <video style={{ width: '100%' }} controls>
+                        <source src={previewImageVideo} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
                 </Modal>
 
             </Drawer>
