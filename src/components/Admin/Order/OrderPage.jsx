@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Card, Statistic, Row, Col, Tag, DatePicker, Popconfirm, message } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined, PauseCircleOutlined } from '@ant-design/icons';
 import './order.scss';
-import { callFetchListOrders } from '../../../services/order';
-import { callFetchListPosts } from '../../../services/post';
+import { callFetchListOrders, updateOrderStatusSeller } from '../../../services/order';
 const { RangePicker } = DatePicker;
 
 const OrderPage = () => {
@@ -16,35 +15,9 @@ const OrderPage = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const data = [
-        {
-            key: '1',
-            id: '#123412451',
-            date: 'June 1, 2020, 08:22 AM',
-            recipient: 'XYZ Store ID',
-            email: 'xyzstore@mail.com',
-            serviceType: 'Server Maintenance',
-            status: 'Completed'
-        },
-        {
-            key: '2',
-            id: '#123412452',
-            date: 'June 1, 2020, 08:22 AM',
-            recipient: 'David Oconner',
-            email: 'davidocon@mail.com',
-            serviceType: 'Clean Up',
-            status: 'Pending'
-        },
-        {
-            key: '3',
-            id: '#123412453',
-            date: 'June 1, 2020, 08:22 AM',
-            recipient: 'Julia Esteh',
-            email: 'juliaesteh@mail.com',
-            serviceType: 'Upgrade Component',
-            status: 'Cancelled'
-        },
-    ];
+    const [processingOrder, setProcessingOrder] = useState([]);
+    const [deliveringOrder, setDeliveringOrder] = useState([]);
+    const [receivedOrder, setReceivedOrder] = useState([]);
 
     useEffect(() => {
         fetchAllOrder();
@@ -57,10 +30,19 @@ const OrderPage = () => {
         if (res && res.result) {
             //Lọc tất cả các order có status = PENDING hoặc
             let orders = res?.result.filter(order => order.orderDetails.status === "PROCESSING" || order.orderDetails.status === "DELIVERING" || order.orderDetails.status === "RECEIVED");
-
             setOriginalListOrders(orders);
             setListOrders(orders);
             setTotal(orders.length);
+
+            //Trạng thái đơn hàng chưa lấy
+            setProcessingOrder(res?.result.filter(order => order.orderDetails.status === "PROCESSING").length);
+
+            //Trạng thái đơn hàng đang giao
+            setDeliveringOrder(res?.result.filter(order => order.orderDetails.status === "DELIVERING").length);
+
+            //Trạng thái đã giao hàng thành công
+            setReceivedOrder(res?.result.filter(order => order.orderDetails.status === "RECEIVED").length);
+
         }
         setIsLoading(false);
     }
@@ -178,20 +160,39 @@ const OrderPage = () => {
                 }
                 return (
                     <>
-                        {record?.orderDetails?.status === "PROCESSING" || record?.orderDetails?.status === "DELIVERING" &&
-                            <Popconfirm
-                                placement="leftTop"
-                                title={"Xác nhận cập nhật trạng thái"}
-                                description={"Bạn có chắc chắn muốn cập nhật trạng thái này?"}
-                                onConfirm={() => handleChangeStatus(record.id)}
-                                onText="Xác nhận"
-                                cancelText="Hủy"
-                            >
-                                <Tag color={color}>{statusText}</Tag>
-                            </Popconfirm>
+                        {record?.orderDetails?.status === "PROCESSING" &&
+                            <div style={{ cursor: "pointer", paddingLeft: 40 }}>
+                                <Popconfirm
+                                    placement="leftTop"
+                                    style={{ cursor: "pointer" }}
+                                    title={"Xác nhận cập nhật trạng thái"}
+                                    description={"Bạn có chắc chắn muốn cập nhật trạng thái lên đang giao hàng?"}
+                                    onConfirm={() => handleChangeStatus(record.id, "DELIVERING")}
+                                    onText="Xác nhận"
+                                    cancelText="Hủy"
+                                >
+                                    <Tag color={color}>{statusText}</Tag>
+                                </Popconfirm>
+                            </div>
+                        }
+                        {record?.orderDetails?.status === "DELIVERING" &&
+                            <div style={{ cursor: "pointer", paddingLeft: 40 }}>
+                                <Popconfirm
+                                    placement="leftTop"
+                                    title={"Xác nhận cập nhật trạng thái"}
+                                    description={"Bạn có chắc chắn muốn cập nhật trạng thái đã nhận hàng?"}
+                                    onConfirm={() => handleChangeStatus(record.id, "RECEIVED")}
+                                    onText="Xác nhận"
+                                    cancelText="Hủy"
+                                >
+                                    <Tag color={color}>{statusText}</Tag>
+                                </Popconfirm>
+                            </div>
                         }
                         {record?.orderDetails?.status === "RECEIVED" &&
-                            <Tag color={color}>{statusText}</Tag>
+                            <div style={{ paddingLeft: 40 }}>
+                                <Tag color={color}>{statusText}</Tag>
+                            </div>
                         }
                     </>
                 )
@@ -199,10 +200,10 @@ const OrderPage = () => {
         },
     ];
 
-    const handleChangeStatus = async (OrderId) => {
-        console.log('>>> check res DELETE BRAND-LINES: ', res);
-        message.success('Xóa dòng thương hiệu thành công');
-        // fetchAllOrder();
+    const handleChangeStatus = async (orderId, orderStatus) => {
+        await updateOrderStatusSeller(orderId, orderStatus)
+        message.success('Cập nhật trạng thái thành công!');
+        fetchAllOrder();
     }
 
     const onChange = (pagination, filters, sorter, extra) => {
@@ -244,25 +245,23 @@ const OrderPage = () => {
                         <Card>
                             <Statistic
                                 title="Tổng số đơn hàng chưa lấy"
-                                value={582}
-                                prefix={<CloseCircleOutlined />}
+                                value={processingOrder}
                             />
                         </Card>
                     </Col>
                     <Col span={8}>
                         <Card>
                             <Statistic
-                                title="Tổng số đơn hàng đang giao thành công"
-                                value={346}
-                                prefix={<PauseCircleOutlined />}
+                                title="Tổng số đơn hàng đang giao"
+                                value={deliveringOrder}
                             />
                         </Card>
                     </Col>
                     <Col span={8}>
                         <Card>
                             <Statistic
-                                title="Tổng số đơn hàng đã giao"
-                                value={236}
+                                title="Tổng số đơn hàng đã giao thành công"
+                                value={receivedOrder}
                                 prefix={<CheckCircleOutlined />}
                             />
                         </Card>
@@ -272,9 +271,9 @@ const OrderPage = () => {
                 <Card className="payment-history">
                     <Row justify="space-between" className="payment-history-header">
                         <Col><h2 style={{ color: 'red' }}>Manage Order</h2></Col>
-                        <Col>
+                        {/* <Col>
                             <RangePicker />
-                        </Col>
+                        </Col> */}
                     </Row>
                 </Card>
 

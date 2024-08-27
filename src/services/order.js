@@ -10,3 +10,13 @@ export const callFetchListOrders = async () => {
         throw error;
     }
 }
+
+export const updateOrderStatusSeller = async (orderId, status) => {
+    try {
+        const response = await axiosInstance.put(`/orders/status-admin?orderId=${orderId}&orderStatus=${status}`, {orderId, status});
+        return response.data;
+    } catch (error) {
+        console.log('Error update order:', error);
+        throw error;
+    }
+};
