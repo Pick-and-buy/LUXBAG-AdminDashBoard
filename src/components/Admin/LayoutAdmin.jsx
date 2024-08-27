@@ -74,11 +74,11 @@ const items = [
         key: 'posts',
         icon: <FileProtectOutlined />,
     },
-    {
-        label: <Link to='/admin/transactions'>Manage Transaction</Link>,
-        key: 'transactions',
-        icon: <AiFillDollarCircle />,
-    },
+    // {
+    //     label: <Link to='/admin/transactions'>Manage Transaction</Link>,
+    //     key: 'transactions',
+    //     icon: <AiFillDollarCircle />,
+    // },
     {
         label: <Link to='/admin/orders'>Manage Orders</Link>,
         key: 'orders',

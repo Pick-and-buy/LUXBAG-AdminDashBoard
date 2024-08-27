@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Card, Statistic, Row, Col, Tag, DatePicker } from 'antd';
+import { Table, Card, Statistic, Row, Col, Tag, DatePicker, Popconfirm, message } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined, FileTextOutlined, PauseCircleOutlined } from '@ant-design/icons';
 import './order.scss';
+import { callFetchListOrders } from '../../../services/order';
+import { callFetchListPosts } from '../../../services/post';
 const { RangePicker } = DatePicker;
 
 const OrderPage = () => {
@@ -49,60 +51,188 @@ const OrderPage = () => {
     }, []);
 
     const fetchAllOrder = async () => {
+        setIsLoading(true);
+        const res = await callFetchListOrders();
+        console.log('>>> check res Order: ', res);
+        if (res && res.result) {
+            //Lọc tất cả các order có status = PENDING hoặc
+            let orders = res?.result.filter(order => order.orderDetails.status === "PROCESSING" || order.orderDetails.status === "DELIVERING" || order.orderDetails.status === "RECEIVED");
 
+            setOriginalListOrders(orders);
+            setListOrders(orders);
+            setTotal(orders.length);
+        }
+        setIsLoading(false);
+    }
+
+    const getUniqueFilterValues = (orders, keyPath) => {
+        const values = orders.map(post => keyPath.reduce((acc, key) => acc?.[key], post)).filter(Boolean);
+        return [...new Set(values)].map(value => ({ text: value, value }));
     }
 
     const columns = [
         {
-            title: 'ID Invoice',
+            title: 'ID Orders',
+            width: '10%',
             dataIndex: 'id',
-            key: 'id',
+            ellipsis: true,  // This will truncate the text and add ellipsis
+            render: (text, record) => {
+                return (
+                    <a href="#" onClick={() => {
+                        // setDataViewDetail(record);
+                        // setOpenViewDetail(true);
+                    }}>
+                        {record?.id}
+                    </a>
+                )
+            },
         },
         {
-            title: 'Date',
-            dataIndex: 'date',
-            key: 'date',
+            title: 'Người Bán',
+            width: '15%',
+            dataIndex: 'sellerName',
+            filters: getUniqueFilterValues(originalListOrders, ['post', 'user', 'username']),
+            filterMode: 'tree',
+            filterSearch: true,
+            render: (text, record) => {
+                return (
+                    <a href="#" onClick={() => {
+                        // setDataViewDetail(record);
+                        // setOpenViewDetail(true);
+                    }}>
+                        {record?.post?.user?.firstName} {record?.post?.user?.lastName}
+                    </a>
+                )
+            },
         },
         {
-            title: 'Recipient',
-            dataIndex: 'recipient',
-            key: 'recipient',
+            title: 'Tên sản phẩm',
+            width: '20%',
+            dataIndex: 'productName',
+            filters: getUniqueFilterValues(originalListOrders, ['post', 'product', 'name']),
+            filterMode: 'tree',
+            filterSearch: true,
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.post?.product?.name}
+                    </div>
+                )
+            },
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+            title: 'SĐT Người Bán',
+            width: '11%',
+            dataIndex: 'phoneNumberSeller',
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.post?.user?.phoneNumber}
+                    </div>
+                )
+            },
         },
         {
-            title: 'Service Type',
-            dataIndex: 'serviceType',
-            key: 'serviceType',
+            title: 'Người Mua',
+            width: '15%',
+            dataIndex: 'buyerName',
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.buyer?.firstName} {record?.buyer?.lastName}
+                    </div>
+                )
+            },
+        },
+        {
+            title: 'SĐT Người Mua',
+            width: '11%',
+            dataIndex: 'phoneNumberBuyer',
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.buyer?.phoneNumber}
+                    </div>
+                )
+            },
         },
         {
             title: 'Status',
             dataIndex: 'status',
-            key: 'status',
-            render: status => {
+            filters: getUniqueFilterValues(originalListOrders, ['orderDetails', 'status']),
+            filterMode: 'tree',
+            filterSearch: true,
+            render: (text, record) => {
                 let color;
-                let text;
-                if (status === 'Completed') {
+                let statusText;
+                const status = record?.orderDetails?.status;
+                if (status === 'PROCESSING') {
                     color = 'green';
-                    text = 'Completed';
-                } else if (status === 'Pending') {
-                    color = 'orange';
-                    text = 'Pending';
-                } else {
+                    statusText = 'Processing';
+                } else if (status === 'DELIVERING') {
+                    color = 'yellow';
+                    statusText = 'Delivering';
+                } else if (status === 'RECEIVED') {
                     color = 'red';
-                    text = 'Cancelled';
+                    statusText = 'Received';
                 }
-                return <Tag color={color}>{text}</Tag>;
-            }
+                return (
+                    <>
+                        {record?.orderDetails?.status === "PROCESSING" || record?.orderDetails?.status === "DELIVERING" &&
+                            <Popconfirm
+                                placement="leftTop"
+                                title={"Xác nhận cập nhật trạng thái"}
+                                description={"Bạn có chắc chắn muốn cập nhật trạng thái này?"}
+                                onConfirm={() => handleChangeStatus(record.id)}
+                                onText="Xác nhận"
+                                cancelText="Hủy"
+                            >
+                                <Tag color={color}>{statusText}</Tag>
+                            </Popconfirm>
+                        }
+                        {record?.orderDetails?.status === "RECEIVED" &&
+                            <Tag color={color}>{statusText}</Tag>
+                        }
+                    </>
+                )
+            },
         },
     ];
 
+    const handleChangeStatus = async (OrderId) => {
+        console.log('>>> check res DELETE BRAND-LINES: ', res);
+        message.success('Xóa dòng thương hiệu thành công');
+        // fetchAllOrder();
+    }
+
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('>>> check onchange:', filters);
+        if (pagination && pagination.current !== current) {
+            setCurrent(pagination.current)
+        }
+        if (pagination && pagination.pageSize !== pageSize) {
+            setPageSize(pagination.pageSize)
+            setCurrent(1)
+        }
 
+        let filteredData = [...originalListOrders];
+        //Filter by sellerName
+        if (filters.sellerName) {
+            filteredData = filteredData.filter(item => filters.sellerName.includes(item.post.user.username))
+        }
+
+        //Filter by product name
+        if (filters.productName) {
+            filteredData = filteredData.filter(item => filters.productName.includes(item.post.product.name))
+        }
+
+        //Filter by status
+        if (filters.status) {
+            filteredData = filteredData.filter(item => filters.status.includes(item?.orderDetails?.status))
+        }
+
+        setListOrders(filteredData);
+        setTotal(filteredData.length);
     }
 
 
@@ -151,7 +281,7 @@ const OrderPage = () => {
                 <Table
                     loading={isLoading}
                     columns={columns}
-                    dataSource={data}
+                    dataSource={listOrders}
                     onChange={onChange}
                     rowKey="id"
                     pagination={
