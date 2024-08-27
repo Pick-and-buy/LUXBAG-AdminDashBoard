@@ -25,6 +25,7 @@ import UserTable from './components/Admin/User/UserTable';
 import NewsTable from './components/Admin/News/NewsTable';
 import PostTable from './components/Admin/Post/PostTable.jsx';
 import TransactionPage from './components/Admin/Transaction/TransactionPage.jsx';
+import OrderPage from './components/Admin/Order/OrderPage.jsx';
 
 const Layout = () => {
   return (
@@ -115,6 +116,10 @@ export default function App() {
         {
           path: "transactions",
           element: <TransactionPage />,
+        },
+        {
+          path: "orders",
+          element: <OrderPage />,
         },
       ],
     },
