@@ -18,6 +18,7 @@ const OrderPage = () => {
     const [processingOrder, setProcessingOrder] = useState([]);
     const [deliveringOrder, setDeliveringOrder] = useState([]);
     const [receivedOrder, setReceivedOrder] = useState([]);
+    const [cancelOrder, setCancelOrder] = useState([]);
 
     useEffect(() => {
         fetchAllOrder();
@@ -30,9 +31,9 @@ const OrderPage = () => {
         if (res && res.result) {
             //Lọc tất cả các order có status = PENDING hoặc
             let orders = res?.result.filter(order => order.orderDetails.status === "PROCESSING" || order.orderDetails.status === "DELIVERING" || order.orderDetails.status === "RECEIVED");
-            setOriginalListOrders(orders);
-            setListOrders(orders);
-            setTotal(orders.length);
+            setOriginalListOrders(res?.result);
+            setListOrders(res?.result);
+            setTotal(res?.result.length);
 
             //Trạng thái đơn hàng chưa lấy
             setProcessingOrder(res?.result.filter(order => order.orderDetails.status === "PROCESSING").length);
@@ -42,6 +43,9 @@ const OrderPage = () => {
 
             //Trạng thái đã giao hàng thành công
             setReceivedOrder(res?.result.filter(order => order.orderDetails.status === "RECEIVED").length);
+
+            //Trạng thái đơn hàng đã bị hủy
+            setCancelOrder(res?.result.filter(order => order.orderDetails.status === "CANCELLED").length);
 
         }
         setIsLoading(false);
@@ -148,7 +152,10 @@ const OrderPage = () => {
                 let color;
                 let statusText;
                 const status = record?.orderDetails?.status;
-                if (status === 'PROCESSING') {
+                if (status === 'PENDING') {
+                    color = 'blue';
+                    statusText = 'Pending';
+                } else if (status === 'PROCESSING') {
                     color = 'green';
                     statusText = 'Processing';
                 } else if (status === 'DELIVERING') {
@@ -157,6 +164,12 @@ const OrderPage = () => {
                 } else if (status === 'RECEIVED') {
                     color = 'red';
                     statusText = 'Received';
+                } else if (status === 'COMPLETED') {
+                    color = 'blue';
+                    statusText = 'Completed';
+                } else if (status === 'CANCELLED') {
+                    color = 'gray';
+                    statusText = 'Cancelled';
                 }
                 return (
                     <>
@@ -190,6 +203,21 @@ const OrderPage = () => {
                             </div>
                         }
                         {record?.orderDetails?.status === "RECEIVED" &&
+                            <div style={{ paddingLeft: 40 }}>
+                                <Tag color={color}>{statusText}</Tag>
+                            </div>
+                        }
+                        {record?.orderDetails?.status === "PENDING" &&
+                            <div style={{ paddingLeft: 40 }}>
+                                <Tag color={color}>{statusText}</Tag>
+                            </div>
+                        }
+                        {record?.orderDetails?.status === "COMPLETED" &&
+                            <div style={{ paddingLeft: 40 }}>
+                                <Tag color={color}>{statusText}</Tag>
+                            </div>
+                        }
+                        {record?.orderDetails?.status === "CANCELLED" &&
                             <div style={{ paddingLeft: 40 }}>
                                 <Tag color={color}>{statusText}</Tag>
                             </div>
@@ -241,7 +269,7 @@ const OrderPage = () => {
         <>
             <div className="invoice-dashboard">
                 <Row gutter={16} className="statistics-row">
-                    <Col span={8}>
+                    <Col span={6}>
                         <Card>
                             <Statistic
                                 title="Tổng số đơn hàng chưa lấy"
@@ -249,7 +277,7 @@ const OrderPage = () => {
                             />
                         </Card>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                         <Card>
                             <Statistic
                                 title="Tổng số đơn hàng đang giao"
@@ -257,7 +285,7 @@ const OrderPage = () => {
                             />
                         </Card>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                         <Card>
                             <Statistic
                                 title="Tổng số đơn hàng đã giao thành công"
@@ -266,7 +294,14 @@ const OrderPage = () => {
                             />
                         </Card>
                     </Col>
-
+                    <Col span={6}>
+                        <Card>
+                            <Statistic
+                                title="Tổng số đơn hàng đã bị hủy"
+                                value={cancelOrder}
+                            />
+                        </Card>
+                    </Col>
                 </Row>
                 <Card className="payment-history">
                     <Row justify="space-between" className="payment-history-header">
