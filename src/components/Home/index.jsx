@@ -41,7 +41,9 @@ const Home = () => {
         setIsLoading(true);
         const res = await callFetchListPosts();
         if (res && res.result) {
-            let posts = [...res.result];
+            // Set state cho listPosts những post có isArchived === false
+            let posts = res.result.filter(post => post.isArchived === false);
+
             if (sortQuery === 'sort=price') {
                 posts.sort((a, b) => (a.product.price ?? 0) - (b.product.price ?? 0));
             } else if (sortQuery === 'sort=-price') {
@@ -84,7 +86,6 @@ const Home = () => {
         setFilter(values);
         setCurrent(1); // Reset current page to 1 when applying filter
         console.log('>>> check filter, ', filter);
-        
     }
 
     const handleOnchangePage = (pagination) => {
