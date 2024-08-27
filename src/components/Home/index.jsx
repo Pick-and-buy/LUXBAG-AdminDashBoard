@@ -52,7 +52,11 @@ const Home = () => {
 
             // Filter by Brand Name
             if (filter.brand && filter.brand.length > 0) {
-                posts = posts.filter((post) => filter.brand.includes(post.product.brand.name));
+                // posts = posts.filter((post) => filter.brand.includes(post.product.brand.name));
+
+                posts = posts.filter((post) => {
+                    return post.product && post.product.brand && filter.brand.includes(post.product.brand.name);
+                });
             }
 
             const start = (current - 1) * pageSize;
@@ -79,6 +83,8 @@ const Home = () => {
     const onFinish = (values) => {
         setFilter(values);
         setCurrent(1); // Reset current page to 1 when applying filter
+        console.log('>>> check filter, ', filter);
+        
     }
 
     const handleOnchangePage = (pagination) => {
@@ -240,6 +246,9 @@ const Home = () => {
                                                                         alt="thumbnail post" />
                                                                 </div>
                                                                 <div className='text' title={item.title}>{item.title}</div>
+                                                                <div className='brand'>
+                                                                    Thương hiệu: {item?.product?.brand?.name}
+                                                                </div>
                                                                 <div className='price'>
                                                                     Giá tiền: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.product?.price ?? 0)}
                                                                 </div>

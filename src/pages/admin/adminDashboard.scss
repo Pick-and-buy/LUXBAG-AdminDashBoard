@@ -25,16 +25,4 @@
     display: flex;
     justify-content: center;
 
-    svg {
-        width: 200px;
-        height: 200px;
-    }
-
-    .chart-label {
-        font-size: 10px;
-        font-weight: bold;
-        fill: #000;
-        text-anchor: middle; // Đảm bảo nhãn được căn giữa
-        dominant-baseline: middle; // Căn giữa theo trục dọc
-    }
 }
