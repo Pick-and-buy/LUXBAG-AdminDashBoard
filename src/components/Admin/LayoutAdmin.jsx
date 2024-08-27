@@ -27,6 +27,7 @@ import './layout.scss';
 import { doLogoutAction } from '../../redux/account/accountSlice';
 import { callLogout } from '../../services/auth';
 import { AiFillDollarCircle } from "react-icons/ai";
+import { TbTruckDelivery } from "react-icons/tb";
 import { SiBrandfolder } from "react-icons/si";
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -77,6 +78,11 @@ const items = [
         label: <Link to='/admin/transactions'>Manage Transaction</Link>,
         key: 'transactions',
         icon: <AiFillDollarCircle />,
+    },
+    {
+        label: <Link to='/admin/orders'>Manage Orders</Link>,
+        key: 'orders',
+        icon: <TbTruckDelivery />,
     },
 ];
 
