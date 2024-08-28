@@ -260,7 +260,7 @@ const OrderPage = () => {
             filteredData = filteredData.filter(item => filters.status.includes(item?.orderDetails?.status))
         }
 
-        setListOrders(filteredData);
+        setListOrders(filteredData.reverse());
         setTotal(filteredData.length);
     }
 
@@ -315,7 +315,7 @@ const OrderPage = () => {
                 <Table
                     loading={isLoading}
                     columns={columns}
-                    dataSource={listOrders}
+                    dataSource={listOrders.reverse()}
                     onChange={onChange}
                     rowKey="id"
                     pagination={
