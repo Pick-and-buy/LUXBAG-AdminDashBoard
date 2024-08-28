@@ -10,15 +10,16 @@ import {
     ReloadOutlined
 } from '@ant-design/icons';
 import { COLORS } from "../../../constants/theme";
-import { callFetchListCategories, callDeleteCategory } from "../../../services/category";
-import * as XLSX from 'xlsx';
-import CategoryViewDetail from "./CategoryViewDetail";
-import CategoryModalCreate from "./CategoryModalCreate";
-import CategoryModalUpdate from "./CategoryModalUpdate";
+import { callFetchListNews, callDeleteNews } from "../../../services/news";
+import NewsViewDetail from './NewsViewDetail';
+import NewsModalCreate from "./NewsModalCreate";
+import NewsModalUpdate from "./NewsModalUpdate";
 
-const CategoryTable = () => {
-    const [originalListCategories, setOriginalListCategories] = useState([]);
-    const [listCategories, setListCategories] = useState([]);
+
+const NewsTable = () => {
+    const [originalListNews, setOriginalListNews] = useState([]);
+    const [listNews, setListNews] = useState([]);
+
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
@@ -34,23 +35,23 @@ const CategoryTable = () => {
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
     useEffect(() => {
-        fetchCategory();
+        fetchNews();
     }, []);
 
-    const fetchCategory = async () => {
+    const fetchNews = async () => {
         setIsLoading(true);
-        const res = await callFetchListCategories();
-        console.log('>>> check call get all Categories <Category Table>: ', res);
+        const res = await callFetchListNews();
+        console.log('>>> check call get all News <News Table>: ', res);
         if (res && res.result) {
-            setOriginalListCategories(res.result);
-            setListCategories(res.result);
+            setOriginalListNews(res.result);
+            setListNews(res.result);
             setTotal(res.result.length);
         }
         setIsLoading(false);
     }
 
-    const getUniqueFilterValues = (listCategory, keyPath) => {
-        const values = listCategory.map(category => keyPath.reduce((acc, key) => acc?.[key], category)).filter(Boolean);
+    const getUniqueFilterValues = (listNews, keyPath) => {
+        const values = listNews.map(news => keyPath.reduce((acc, key) => acc?.[key], news)).filter(Boolean);
         return [...new Set(values)].map(value => ({ text: value, value }));
     }
 
@@ -71,36 +72,56 @@ const CategoryTable = () => {
             }
         },
         {
-            title: 'Thể Loại',
+            title: 'Tiêu Đề',
+            width: '25%',
             align: 'center',
-            dataIndex: 'categoryName',
-            sorter: (a, b) => a.categoryName.length - b.categoryName.length,
-            filters: originalListCategories.map(category => ({
-                text: category.categoryName,
-                value: category.categoryName,
+            dataIndex: 'title',
+            ellipsis: true,
+            sorter: (a, b) => a.title.length - b.title.length,
+            filters: originalListNews.map(news => ({
+                text: news.title,
+                value: news.title,
             })),
             filterMode: 'tree',
             filterSearch: true,
+            //onFilter: (value, record) => record.title.includes(value),
             render: (text, record) => {
                 return (
                     <a href="#" onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>
-                        {record.categoryName}
+                        {record.title}
                     </a>
+                )
+            }
+        },
+        {
+            title: 'Thương Hiệu',
+            width: '15%',
+            align: 'center',
+            dataIndex: 'name',
+            filters: getUniqueFilterValues(originalListNews, ['brandLine', 'brand', 'name']),
+            filterMode: 'tree',
+            filterSearch: true,
+            //onFilter: (value, record) => record.brandLine?.brand?.name.includes(value),
+            render: (text, record) => {
+                return (
+                    <div>
+                        {record?.brandLine?.brand?.name}
+                    </div>
                 )
             },
         },
         {
             title: 'Dòng Thương Hiệu',
+            width: '15%',
             align: 'center',
             dataIndex: 'lineName',
-            sorter: (a, b) => a?.brandLine?.lineName.length - b?.brandLine?.lineName.length,
-            filters: getUniqueFilterValues(originalListCategories, ['brandLine', 'lineName']),
+            filters: getUniqueFilterValues(originalListNews, ['brandLine', 'lineName']),
             filterMode: 'tree',
             filterSearch: true,
-            //onFilter: (value, record) => record?.brandLine?.lineName.includes(value),
+            //onFilter: (value, record) => record.brandLine?.lineName.includes(value),
             render: (text, record) => {
                 return (
                     <div>
@@ -110,17 +131,23 @@ const CategoryTable = () => {
             },
         },
         {
-            title: 'Action',
+            title: 'Nội Dung',
             align: 'center',
+            dataIndex: 'content',
+            ellipsis: true,
+        },
+        {
+            title: 'Action',
             width: '10%',
+            align: 'center',
             render: (text, record, index) => {
                 return (
                     <>
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa thể loại"}
-                            description={"Bạn có chắc chắn muốn xóa thể loại này?"}
-                            onConfirm={() => handleDeleteCategory(record.categoryName)}
+                            title={"Xác nhận xóa news"}
+                            description={"Bạn có chắc chắn muốn xóa news?"}
+                            onConfirm={() => handleDeleteNews(record.id)}
                             onText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -142,11 +169,11 @@ const CategoryTable = () => {
         },
     ];
 
-    const handleDeleteCategory = async (name) => {
-        let query = `categoryName=${name}`;
-        await callDeleteCategory(query);
-        message.success('Xóa thể loại thành công');
-        fetchCategory();
+    const handleDeleteNews = async (id) => {
+        let query = `newsId=${id}`;
+        const res = await callDeleteNews(query);
+        message.success('Xóa news thành công');
+        fetchNews();
     }
 
     const onChange = (pagination, filters, sorter, extra) => {
@@ -158,45 +185,35 @@ const CategoryTable = () => {
             setCurrent(1)
         }
 
-        let filteredData = [...originalListCategories];
+        let filteredData = [...originalListNews];
 
-        //Filter by category name
-        if(filters.categoryName) {
-            filteredData = filteredData.filter(item => filters.categoryName.includes(item.categoryName))
+        //Filter by Title
+        if(filters.title) {
+            filteredData = filteredData.filter(item => filters.title.includes(item.title))
         }
 
-        //Filter by brand line name
+        //Filter by Brand name
+        if(filters.name) {
+            filteredData = filteredData.filter(item => filters.name.includes(item?.brandLine?.brand?.name))
+        }
+
+        //Filter by Brand Line Name
         if(filters.lineName) {
-            filteredData = filteredData.filter(item => filters.lineName.includes(item.brandLine.lineName))
+            filteredData = filteredData.filter(item => filters.lineName.includes(item?.brandLine?.lineName))
         }
 
-        setListCategories(filteredData);
+
+        setListNews(filteredData);
         setTotal(filteredData.length);
 
         console.log('check params', pagination, filters, sorter, extra);
     }
 
-    const handleExportData = () => {
-        //https://stackoverflow.com/questions/70871254/how-can-i-export-a-json-object-to-excel-using-nextjs-react
-        if (listCategories.length > 0) {
-            const worksheet = XLSX.utils.json_to_sheet(listCategories);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-            XLSX.writeFile(workbook, "ExportCategory.csv");
-        }
-    }
-
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>Table List Category</span>
+                <span style={{ fontSize: 20, fontFamily: 'bold', color: COLORS.primary }}>News</span>
                 <span style={{ display: 'flex', gap: 10 }}>
-                    {/* <Button
-                        icon={<ExportOutlined />}
-                        type="primary"
-                        onClick={() => handleExportData()}
-                    >Export
-                    </Button> */}
                     <Button
                         icon={<PlusOutlined />}
                         type="primary" danger
@@ -208,7 +225,6 @@ const CategoryTable = () => {
         )
     }
 
-
     return (
         <>
             <Row>
@@ -217,7 +233,7 @@ const CategoryTable = () => {
                         title={renderHeader}
                         loading={isLoading}
                         columns={columns}
-                        dataSource={listCategories}
+                        dataSource={listNews}
                         onChange={onChange}
                         rowKey="id"
                         pagination={
@@ -226,6 +242,7 @@ const CategoryTable = () => {
                                 pageSize: pageSize,
                                 total: total,
                                 showSizeChanger: true,
+                                //showTotal: To display the total number and range
                                 showTotal: (total, range) => {
                                     return (
                                         <div>
@@ -233,25 +250,26 @@ const CategoryTable = () => {
                                         </div>
                                     )
                                 }
+
                             }
                         }
                     />
                 </Col>
             </Row>
-            <CategoryViewDetail 
+            <NewsViewDetail
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
             />
-            <CategoryModalCreate 
+            <NewsModalCreate
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
-                fetchCategory={fetchCategory}
+                fetchNews={fetchNews}
             />
-            <CategoryModalUpdate 
+            <NewsModalUpdate 
                 openModalUpdate={openModalUpdate}
                 setOpenModalUpdate={setOpenModalUpdate}
-                fetchCategory={fetchCategory}
+                fetchNews={fetchNews}
                 dataUpdate={dataUpdate}
                 setDataUpdate={setDataUpdate}
             />
@@ -259,4 +277,4 @@ const CategoryTable = () => {
     )
 }
 
-export default CategoryTable;
+export default NewsTable;

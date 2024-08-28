@@ -5,8 +5,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import Login from './pages/login/index.jsx';
-import ContactPage from './pages/contact/index.jsx';
-import BookPage from './pages/book/index.jsx';
+import PostPage from './pages/post/index.jsx';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home/index.jsx';
@@ -19,8 +18,14 @@ import BrandTable from './components/Admin/Brand/BrandTable.jsx';
 import BrandLinesTable from './components/Admin/BrandLines/BrandLinesTable';
 import CategoryTable from './components/Admin/Category/CategoryTable.jsx';
 import LayoutAdmin from './components/Admin/LayoutAdmin.jsx';
+import './styles/reset.scss';
 import AdminDashboard from './pages/admin/index.jsx';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import UserTable from './components/Admin/User/UserTable';
+import NewsTable from './components/Admin/News/NewsTable';
+import PostTable from './components/Admin/Post/PostTable.jsx';
+import TransactionPage from './components/Admin/Transaction/TransactionPage.jsx';
+import OrderPage from './components/Admin/Order/OrderPage.jsx';
 
 const Layout = () => {
   return (
@@ -36,23 +41,26 @@ export default function App() {
 
   const isLoading = useSelector(state => state.account.isLoading);
   const isAuthenticated = useSelector(state => state.account.isAuthenticated);
-
   const dispatch = useDispatch();
 
   const getAccount = async () => {
-
     if (window.location.pathname === '/login') return;
 
     const res = await callFetchAccount();
-    console.log(">>> check res callFetchAccount <App.js>: ", res);
     if (res && res.result) {
       dispatch(doGetAccountAction(res.result))
     }
   }
 
+  // useEffect(() => {
+  //   getAccount();
+  // }, [])
+
   useEffect(() => {
-    getAccount();
-  }, [])
+    if (!isAuthenticated) {
+      getAccount();
+    }
+  }, [isAuthenticated]);
 
   const router = createBrowserRouter([
 
@@ -64,26 +72,26 @@ export default function App() {
       children: [
         { index: true, element: <Home /> },
         {
-          path: "contact",
-          element: <ContactPage />,
-        },
-        {
-          path: "book",
-          element: <BookPage />,
+          path: "post/:slug",
+          element: <PostPage />,
         },
       ],
     },
     //================Admin====================
     {
       path: "/admin",
-      element: <LayoutAdmin />,
+      element:
+        <ProtectedRoute>
+          <LayoutAdmin />
+        </ProtectedRoute>,
       errorElement: <NotFound />,
       children: [
         {
-          index: true, element:
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
+          index: true, element: <AdminDashboard />
+        },
+        {
+          path: "user",
+          element: <UserTable />,
         },
         {
           path: "brands",
@@ -97,6 +105,22 @@ export default function App() {
           path: "category",
           element: <CategoryTable />,
         },
+        {
+          path: "news",
+          element: <NewsTable />,
+        },
+        {
+          path: "posts",
+          element: <PostTable />,
+        },
+        {
+          path: "transactions",
+          element: <TransactionPage />,
+        },
+        {
+          path: "orders",
+          element: <OrderPage />,
+        },
       ],
     },
 
@@ -105,18 +129,22 @@ export default function App() {
       path: "/login",
       element: <Login />,
     },
-
   ]);
+
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
 
   return (
     <>
-      {isLoading === false
-        || window.location.pathname === '/login'
+      {/* {isLoading === false
+        || window.location.pathname === '/login' || window.location.pathname === '/'
         ?
         <RouterProvider router={router} />
         :
         <Loading />
-      }
+      } */}
+      <RouterProvider router={router} />
     </>
   )
 }
