@@ -47,7 +47,7 @@ const AdminDashboard = () => {
                         animate
                         label={({ dataEntry }) => `${Math.round(dataEntry.percentage)} %`}
                         labelStyle={{ 
-                            fontSize: '8px',
+                            fontSize: '6px',
                             fontWeight: 'bold',
                             fill: '#000',
                             textAnchor: 'middle',          // Đảm bảo nhãn được căn giữa ngang
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
 
                         }}
                         radius={42}    // Điều chỉnh bán kính để nhãn nằm chính xác ở trung tâm
-                        lineWidth={30}  // Điều chỉnh độ dày của đường tròn
+                        lineWidth={50}  // Điều chỉnh độ dày của đường tròn
                         labelPosition={70}  // Điều chỉnh vị trí nhãn để đảm bảo chúng nằm đúng trung tâm
                         segmentsShift={1}   // Dịch chuyển nhẹ các phần để tạo khoảng cách giữa chúng
                         style={{ width: '300px', height: '300px' }}  // Đảm bảo SVG có tỉ lệ 1:1
